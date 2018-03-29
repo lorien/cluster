@@ -1,0 +1,21 @@
+---
+- apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- apt:
+    name: apt-transport-https
+
+- copy:
+    content: deb https://artifacts.elastic.co/packages/5.x/apt stable main 
+    dest: /etc/apt/sources.list.d/elastic-5.x.list
+
+- apt:
+    update_cache: true
+
+- apt:
+    name: elasticsearch
+
+- service:
+    name: elasticsearch
+    enabled: true
+    state: started

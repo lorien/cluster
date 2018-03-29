@@ -1,0 +1,9 @@
+---
+- name: Change SSH port
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^Port \d+$"
+              line="Port {{ sshd_port }}"
+
+- name: Restart SSH daemon
+  service: name=ssh
+           state=restarted

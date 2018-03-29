@@ -1,0 +1,17 @@
+---
+- mount: src=/dev/sda1
+         name=/data
+         opts="discard,noatime,nodiratime,errors=remount-ro"
+         fstype=ext4
+         state=mounted
+
+- stat: path=/var/lib
+  register: var_lib
+
+- shell: mv /var/lib /data
+  when: var_lib.stat.islnk == False
+
+- file: dest=/var/lib
+        src=/data/lib
+        state=link
+  when: var_lib.stat.islnk == False

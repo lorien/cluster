@@ -1,0 +1,8 @@
+---
+- apt: name=nginx-full state=latest
+
+- name: Set up default nginx site
+  copy: dest=/etc/nginx/sites-available/default
+        src=files/nginx_default_site
+
+- service: name=nginx enabled=yes state=reloaded

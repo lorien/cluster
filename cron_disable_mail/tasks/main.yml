@@ -1,0 +1,2 @@
+---
+- cron: name=MAILTO env=yes value="" user="{{ cron_user }}"

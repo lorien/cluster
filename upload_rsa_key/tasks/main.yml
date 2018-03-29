@@ -1,0 +1,10 @@
+---
+- name: Copy private rsa key
+  copy: src={{ key_path }}
+        dest=/home/{{ username }}/.ssh/id_rsa
+        owner={{ username }} group={{ username }} mode=0600
+
+- name: Copy public rsa key
+  copy: src={{ key_path }}.pub
+        dest=/home/{{ username }}/.ssh/id_rsa.pub
+        owner={{ username }} group={{ username }} mode=0600

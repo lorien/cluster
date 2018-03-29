@@ -1,0 +1,3 @@
+---
+- name: Set UTC timezone
+  timezone: name=UTC

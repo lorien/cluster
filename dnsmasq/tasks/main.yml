@@ -1,0 +1,22 @@
+---
+- apt: name=bind9 state=absent
+
+- apt: name=unbound state=absent
+
+- apt: name=dnsmasq
+
+- shell: chattr -i /etc/resolv.conf
+
+- copy: src=files/dnsmasq.conf
+        dest=/etc/dnsmasq.conf
+
+- copy: src=files/resolv.conf
+        dest=/etc/resolv.conf
+
+- shell: chattr +i /etc/resolv.conf
+
+- service: name=dnsmasq state=restarted
+
+- name: Fix suid bit on /bin/ping
+  file: dest=/bin/ping
+        mode="u+s"

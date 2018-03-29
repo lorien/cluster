@@ -1,0 +1,32 @@
+---
+- set_fact: newrelic_lic_key="{{ newrelic_lic_key | default('') }}"
+
+- name: Add newrelic APT sources item
+  copy: content="deb http://apt.newrelic.com/debian/ newrelic non-free"
+        dest=/etc/apt/sources.list.d/newrelic.list
+  when: newrelic_lic_key != ""
+
+- name: Add newrelic APT key
+  apt_key: url=https://download.newrelic.com/548C16BF.gpg
+  when: newrelic_lic_key != ""
+
+- name: Update APT repos
+  apt: update_cache=yes
+  when: newrelic_lic_key != ""
+
+- name: Install newrelic daemon
+  apt: name=newrelic-sysmond
+  when: newrelic_lic_key != ""
+
+- name: Configure newrelic daemon
+  lineinfile: dest=/etc/newrelic/nrsysmond.cfg
+              regexp="^license_key=.*"
+              line="license_key={{ newrelic_lic_key }}"
+  when: newrelic_lic_key != ""
+
+- name: Add newrelic to auto-start
+  service: name=newrelic-sysmond enabled=yes
+  when: newrelic_lic_key != ""
+
+- service: name=newrelic-sysmond state=restarted
+  when: newrelic_lic_key != ""

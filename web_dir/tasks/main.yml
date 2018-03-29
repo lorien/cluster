@@ -1,0 +1,17 @@
+---
+- file: dest=/home/{{ web_dir_username }}/web
+        state=directory
+        owner="{{ web_dir_username }}" group="{{ web_dir_username }}"
+
+- file: dest=/web
+        src=/home/{{ web_dir_username }}/web
+        state=link
+        owner="{{ web_dir_username }}" group="{{ web_dir_username }}"
+
+- file: dest=/web/log
+        state=directory
+        owner="{{ web_dir_username }}" group="{{ web_dir_username }}"
+
+- file: dest=/web/run
+        state=directory
+        owner="{{ web_dir_username }}" group="{{ web_dir_username }}"

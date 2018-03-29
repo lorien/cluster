@@ -1,0 +1,11 @@
+---
+- copy: dest=/sbin/setup_irq.sh
+        src=files/setup_irq.sh
+        mode=u+x
+  register: copy_res
+
+- shell: /sbin/setup_irq.sh 
+
+- lineinfile: dest=/etc/rc.local
+              line=/sbin/setup_irq.sh
+              insertbefore="^exit 0$"

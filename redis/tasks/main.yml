@@ -1,0 +1,7 @@
+---
+- apt: name=redis-server
+
+- lineinfile: dest=/etc/systemd/system/multi-user.target.wants/redis-server.service
+              insertafter="^\[Service\]$"
+              regexp="^LimitNOFILE"
+              line="LimitNOFILE=65536"

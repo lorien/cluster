@@ -1,0 +1,140 @@
+---
+# HOWTO:
+# * http://www.nateware.com/linux-network-tuning-for-2013.html#.Vy7-OK995pi
+# * https://voipmagazine.wordpress.com/tag/tcp_max_tw_buckets/
+# * http://savapage.com/docs/manual/ch-performance-tuning.html
+# * http://ru.fractalizer.ru/frpost_197/%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D1%8F%D0%B4%D1%80%D0%B0-linux-%D0%B4%D0%BB%D1%8F-%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B8-%D0%B1%D0%BE%D0%BB%D1%8C%D1%88%D0%BE/
+# * https://www.kernel.org/doc/Documentation/sysctl/net.txt
+# * https://wiki.mikejung.biz/Sysctl_tweaks
+# * https://fasterdata.es.net/host-tuning/linux/
+# * https://klaver.it/linux/sysctl.conf
+# * http://engineering.chartbeat.com/2014/01/02/part-1-lessons-learned-tuning-tcp-and-nginx-in-ec2/
+# * http://www.slideshare.net/chartbeat/tuning-tcp-and-nginx-on-ec2
+# * http://www.slashroot.in/linux-network-tcp-performance-tuning-sysctl
+# * http://www.lognormal.com/blog/2012/09/27/linux-tcpip-tuning/
+# * http://citforum.ru/operating_systems/linux/ipsysctl/3.shtml
+
+
+# UNCHECKED PARAMETERS
+
+# The maximum receive socket buffer size in bytes
+- sysctl: name=net.core.rmem_max value=16777216
+
+# The maximum send socket buffer size in bytes
+- sysctl: name=net.core.wmem_max value=16777216
+
+## 
+## # The default setting of the socket receive buffer in bytes
+## # USE DEFAULT
+## #- sysctl: name=net.core.rmem_default value=65536
+## 
+## # The default setting of the socket send buffer in bytes
+## # USE DEFAULT
+## #- sysctl: name=net.core.wmem_default value=65536
+## 
+## # http://www.ncftp.com/ncftpd/doc/misc/ephemeral_ports.html
+## # defines the local port range that is used by TCP and UDP traffic to choose the local port
+## - sysctl: name=net.ipv4.ip_local_port_range value="10000 65000"
+## 
+## # Maximum ancillary buffer size allowed per socket. Ancillary data is a sequence
+## # of struct cmsghdr structures with appended data.
+## - sysctl: name=net.core.optmem_max value=65536
+## 
+## # Векторная (минимум, по умолчанию, максимум) переменная в файле tcp_rmem содержит 3 целых числа, определяющих размер приемного буфера сокетов TCP.
+## 
+## # Минимум: каждый сокет TCP имеет право использовать эту память по факту своего создания. Возможность использования такого буфера гарантируется даже при достижении порога ограничения (moderate memory pressure). Размер минимального буфера по умолчанию составляет 8 Кбайт (8192).
+## 
+## # Значение по умолчанию: количество памяти, допустимое для буфера передачи сокета TCP по умолчанию. Это значение применяется взамен параметра /proc/sys/net/core/rmem_default, используемого другими протоколами. Значение используемого по умолчанию буфера обычно (по умолчанию) составляет 87830 байт. Это определяет размер окна 65535 с заданным по умолчанию значением tcp_adv_win_scale и tcp_app_win = 0, несколько меньший, нежели определяет принятое по умолчанию значение tcp_app_win.
+## 
+## # Максимум: максимальный размер буфера, который может быть автоматически выделен для приема сокету TCP. Это значение не отменяет максимума, заданного в файле /proc/sys/net/core/rmem_max. При “статическом” выделении памяти с помощью SO_RCVBUF этот параметр не имеет значения.
+## #
+- sysctl: name=net.ipv4.tcp_rmem value="4096 87380 16777216"
+## 
+## # you should leave net.tcp_mem alone, as the defaults are fine. 
+## # Don’t touch tcp_mem for two reasons: Firstly, unlike tcp_rmem and tcp_wmem it’s in pages, not bytes, so it’s likely to confuse the hell out of you. Secondly, it’s already auto-tuned very well by Linux based on the amount of RAM.
+## # USE DEFAULT
+## 
+## # Значение по умолчанию: количество памяти, допустимое для буфера передачи сокета TCP по умолчанию. Это значение применяется взамен параметра /proc/sys/net/core/wmem_default, используемого другими протоколами и обычно меньше, чем /proc/sys/net/core/wmem_default. Размер принятого по умолчанию буфера обычно (по умолчанию) составляет 16 Кбайт (16384)
+- sysctl: name=net.ipv4.tcp_wmem value="4096 65536 16777216"
+## 
+## # If enabled, provide RFC 2861 behavior and time out the congestion window after an idle period. An idle period is defined as the current RTO (retransmission timeout). If disabled, the congestion window will not be timed out after an idle period. Many people suggest disabling this, which should help to improve performance in some cases.
+## - sysctl: name=net.ipv4.tcp_slow_start_after_idle value=0
+## 
+## # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security_Guide/sect-Security_Guide-Server_Security-Disable-Source-Routing.html
+## - sysctl: name=net.ipv4.conf.all.send_redirects value=0
+## - sysctl: name=net.ipv4.conf.all.accept_redirects value=0
+## - sysctl: name=net.ipv4.conf.all.accept_source_route value=0
+## 
+## # Congestion refers to a network state where a node or link carries so much data that it may deteriorate network service quality, resulting in queuing delay, frame or data packet loss and the blocking of new connections.  In a congested network, response time slows with reduced network throughput. Congestion occurs when bandwidth is insufficient and network data traffic exceeds capacity.
+## # USE DEFAULT
+## #- sysctl: name=net.ipv4.tcp_congestion_control value=cubic
+## 
+## # Turn on the tcp_timestamps, accurate timestamp make TCP congestion control algorithms work better
+## # DEFAULT is 1
+## - sysctl: name=net.ipv4.tcp_timestamps value=1
+## 
+## # DEFAULT is 1
+## - sysctl: name=net.ipv4.tcp_sack value=1
+## 
+## # DEFAULT is 1
+## - sysctl: name=net.ipv4.tcp_window_scaling value=1
+## 
+## # Enable a fix for RFC1337 - time-wait assassination hazards in TCP
+## # protect against tcp time-wait assassination hazards
+## # drop RST packets for sockets in the time-wait state
+## # (not widely supported outside of linux, but conforms to RFC)
+## - sysctl: name=net.ipv4.tcp_rfc1337 value=1
+## 
+## # http://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux.html
+## - sysctl: name=net.ipv4.tcp_tw_reuse value=1
+## - sysctl: name=net.ipv4.tcp_tw_recycle value=0
+## 
+## # Disable cache metrics so the initial conditions of the closed connections will not be saved to be used in near future connections
+## - sysctl: name=net.ipv4.tcp_no_metrics_save value=1
+## 
+## # Maximum number  of  packets,  queued  on  the  INPUT  side, when the interface receives packets faster than kernel can process them.
+## # twice bigger as tcp_max_syn_backlog
+- sysctl: name=net.core.netdev_max_backlog value=8169
+## 
+## # The maximum number of queued connection requests which have still not received an acknowledgement from the connecting client. If this number is exceeded, the kernel will begin dropping requests.
+## # You probably don't want this to be set too high unless your server has plenty of resources, even then, if you are getting a large backlog and your server can't keep up you might be better off with using a load balancer and splitting the traffic between multiple servers.
+- sysctl: name=net.ipv4.tcp_max_syn_backlog value=4096
+## 
+## # SOMAXCONN can be used as a statement which specifies the max number of connection requests that can be queued for any given listening socket. If the backlog argument is greater than the value in /proc/sys/net/core/somaxconn, then it is silently truncated to that value;
+- sysctl: name=net.core.somaxconn value=8196
+## 
+## # Decrease the time that sockets stay in the TIME_WAIT state by lowering tcp_fin_timeout from its default of 60 seconds to 10. You can lower this even further, but too low, and you can run into socket close errors in networks with lots of jitter. 
+## # The time a connection should spend in FIN_WAIT_2 state. Default is 60 seconds, lowering this will free memory more quickly and transition the socket to TIME_WAIT. This wil NOT reduce the time a socket is in TIME_WAIT which is set to 2 * MSL (max segment lifetime)
+## - sysctl: name=net.ipv4.tcp_fin_timeout value=10
+## 
+## # Max number of sockets in TIME_WAIT. Exceeding this leads to sockets being torn down until under limit.
+## # i AM NOT SURE i NEED TO INCREASE THIS VALUE
+## # # Increase the tcp-time-wait buckets pool size to prevent simple DOS attacks
+## # net.ipv4.tcp_max_tw_buckets = 2000000
+## 
+## # Prevent SYN attack, enable SYNcookies (they will kick-in when the max_syn_backlog reached)
+## - sysctl: name=net.ipv4.tcp_syncookies value=1
+## 
+## # 
+## #  The first two parameters are expressed in seconds, and the last is the pure number. This means that the keepalive routines wait for X seconds before sending the first keepalive probe, and then resend it every Y seconds. If no ACK response is received for Z consecutive times, the connection is marked as broken.
+## - sysctl: name=net.ipv4.tcp_keepalive_time value=1800
+## - sysctl: name=net.ipv4.tcp_keepalive_intvl value=15
+## - sysctl: name=net.ipv4.tcp_keepalive_probes value=5
+## 
+## # Максимальное количество попыток повторной передачи пакетов по установленному соединению прежде, чем сообщение об ошибке будет передано сетевому уровню, в результате чего может быть выбран другой маршрут для отправки последующих пакетов
+## # USE DEFAULT
+## #- sysctl: name=net.ipv4.tcp_retries1 value=3
+## 
+## # Максимальное количество попыток повторной передачи пакетов, до того как соединение будет считаться разорванным.
+## # USE DEFAULT
+## #- sysctl: name=net.ipv4.tcp_retries2 value=15
+## 
+## # Количество попыток передачи SYN-пакета при установлении нового соединения
+## - sysctl: name=net.ipv4.tcp_syn_retries value=2
+## - sysctl: name=net.ipv4.tcp_synack_retries value=2
+#
+#
+#
+- sysctl: name=net.ipv4.tcp_tw_reuse value=1
+- sysctl: name=net.ipv4.tcp_orphan_retries value=3
+- sysctl: name=net.ipv4.ip_local_port_range value="1200 65535"

@@ -1,0 +1,41 @@
+---
+- set_fact:
+    home_dir: "{% if username == 'root' %}/root{% else %}/home/{{ username }}{% endif %}"
+
+- name: Add user
+  user: name="{{ username }}" shell=/bin/bash
+
+- name: Setup default editor
+  copy: content="SELECTED_EDITOR=\"/usr/bin/vim\""
+        dest={{ home_dir }}/.selected_editor
+        owner="{{ username }}" group="{{ username }}"
+
+- name: Update APT repos
+  apt: update_cache=yes
+
+- apt: name=vim
+
+- alternatives: name=editor path=/usr/bin/vim
+
+- name: Setup vim config
+  copy: src=files/.vimrc
+        dest={{ home_dir }}/.vimrc
+        owner="{{ username }}" group="{{ username }}"
+
+- name: Add supervisor alias
+  lineinfile: dest={{ home_dir }}/.bashrc
+              line='alias sv="/usr/local/bin/supervisorctl"'
+
+- name: Add ave alias
+  lineinfile: dest={{ home_dir }}/.bashrc
+              line='alias ave="source .env/bin/activate"'
+
+- name: Configure git
+  copy: src=files/.gitconfig
+        dest={{ home_dir }}/.gitconfig
+        owner="{{ username }}" group="{{ username }}"
+
+- name: Configure mercurial
+  copy: src=files/.hgrc
+        dest={{ home_dir }}/.hgrc
+        owner="{{ username }}" group="{{ username }}"

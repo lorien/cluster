@@ -1,0 +1,78 @@
+---
+- name: Install common stuff
+  apt: name={{ item }}
+  with_items:
+    #- exim4
+    #- bind9-host
+    - apache2-utils
+    - aptitude
+    - conntrack
+    - curl
+    - debconf-utils
+    - firmware-linux-nonfree
+    - g++
+    - gcc
+    - geoip-database
+    - gettext
+    - git-core
+    - iftop
+    - iotop
+    - less
+    - libc-ares-dev
+    - libcurl4-openssl-dev # build pycurl from source
+    - libfreetype6-dev # to build PIL from source
+    - libjpeg-dev # to build PIL from source
+    - libmemcached-dev
+    #- libmysqld-dev # to build mysql driver from source
+    - libmariadb-dev # to build mysql driver from source
+    - libssl-dev
+    - libxml2-dev # to build lxml from source
+    - libxslt1-dev
+    - lshw
+    - make
+    - mercurial
+    #- nfs-common
+    - numactl
+    - openvpn
+    - perl
+    - sshfs
+    - lvm2
+    #- perl-base
+    #- perl-modules
+    - pigz
+    - psmisc
+    - python
+    - python3
+    - python3-dev
+    - python3-pip
+    - python3-pyqt4
+    - python3-setuptools
+    - python-crypto
+    - python-dev
+    - python-pip
+    - python-setuptools
+    - screen
+    - subversion
+    - sudo
+    - unrar
+    - unzip
+    - vim
+    - vim-nox
+    - whois
+    - tcpdump
+    - libgeoip-dev
+    - strace
+    - wget
+    - dnsutils
+    - ethtool
+    - libffi-dev
+
+- name: Install python packages
+  pip: executable={{ item[0] }} name={{ item[1] }}
+  with_nested:
+    - [ 'pip2', 'pip3' ]
+    - [ 'virtualenv' ]
+
+- pip: name=ps_mem
+
+- pip: name=pywtf

@@ -1,0 +1,41 @@
+---
+# https://underyx.me/2015/05/18/raising-the-maximum-number-of-file-descriptors
+
+- name: Create supervisor group
+  group: name=supervisor
+
+- name: Install python-pip
+  apt: name=python-pip
+
+- name: Install supervisor
+  pip: name=supervisor state=latest
+
+- name: Install supervisor systemd service
+  copy: dest=/etc/systemd/system/supervisor.service
+        src=files/supervisor.service
+  register: res_sv_systemd
+
+- name: Creating supervisor.service.d directory
+  file: path=/etc/systemd/system/supervisor.service.d
+        state=directory
+
+- name: Install supervisor config
+  copy: dest=/etc/supervisord.conf
+        src=files/supervisord.conf
+  register: res_sv_etc
+
+- name: Create /etc/supervisord.conf.d
+  file: path=/etc/supervisord.conf.d
+        state=directory
+        owner=root group=supervisor mode=0775
+
+- name: Start supervisor service
+  service: name=supervisor enabled=yes state=started
+
+- name: Restart supervisor if new config file was uploaded
+  service: name=supervisor state=restarted
+  when: res_sv_systemd.changed or res_sv_etc.changed
+
+- name: Add user into supervisor group
+  user: name="{{ supervisor_add_user }}" groups=supervisor append=yes
+  when: supervisor_add_user != ""

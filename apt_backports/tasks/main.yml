@@ -1,0 +1,8 @@
+---
+- copy: src=roles/apt_backports/files/apt.preferences.02backports
+        dest=/etc/apt/preferences.d/02backports
+
+- copy: src=roles/apt_backports/files/apt.sources.backports.list
+        dest=/etc/apt/sources.list.d/backports.list
+
+- apt: update_cache=yes

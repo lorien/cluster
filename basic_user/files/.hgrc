@@ -1,0 +1,6 @@
+[ui]
+username = x <x@x.com>
+
+[defaults]
+# suppress noisy extdiff header message
+cdiff = -q

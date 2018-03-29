@@ -1,0 +1,14 @@
+---
+- name: Create default rc.local if it does not exists
+  copy:
+    src: files/rc.local
+    dest: /etc/rc.local
+    force: no
+
+- service:
+    name: rc-local
+    state: started
+
+- file:
+    dest: /etc/rc.local
+    mode: "u+rwx,g+rx,o+rx"

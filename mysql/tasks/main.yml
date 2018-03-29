@@ -1,0 +1,14 @@
+---
+- debconf: name='mysql-server'
+           question='mysql-server/root_password'
+           value=''
+           vtype='password'
+
+- debconf: name='mysql-server'
+           question='mysql-server/root_password_again'
+           value=''
+           vtype='password'
+
+- apt: name=mysql-server-5.5
+
+#- mysql_user: name=zabbix password=''

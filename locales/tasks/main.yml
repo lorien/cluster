@@ -1,0 +1,4 @@
+---
+- name: Enable locales
+  locale_gen: name={{ item }}
+  with_items: ["en_US.UTF-8"]

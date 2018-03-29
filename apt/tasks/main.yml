@@ -1,0 +1,31 @@
+---
+- name: Setup APT sources
+  copy: src=files/sources.list
+        dest=/etc/apt/sources.list
+
+- name: Disable installing suggested APT packages
+  copy: content="APT::Install-Suggested \"false\";" dest=/etc/apt/apt.conf.d/07custom
+
+- name: Remove deprecated file
+  file: path=/etc/apt/preferences.d/01custom
+        state=absent
+
+- name: Remove deprecated file
+  file: dest=/etc/apt/preferences.d/02testing
+        state=absent
+
+- copy: src=files/01stable
+        dest=/etc/apt/preferences.d/01stable
+
+- name: Update APT repos
+  apt: update_cache=yes
+
+- name: Install new debian keyring
+  apt: name=debian-archive-keyring
+       allow_unauthenticated=yes
+
+- name: Fix apt errors
+  shell: apt-get -yf install
+
+- name: APT dist-upgrade
+  apt: upgrade=dist

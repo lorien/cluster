@@ -1,0 +1,7 @@
+---
+- shell: chattr -i /etc/resolv.conf
+
+- copy: content="nameserver 8.8.8.8"
+        dest=/etc/resolv.conf
+
+- shell: chattr +i /etc/resolv.conf
