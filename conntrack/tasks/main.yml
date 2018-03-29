@@ -1,0 +1,30 @@
+---
+# https://wiki.khnet.info/index.php/Conntrack_tuning
+
+- name: Add conntrack module into auto-load list
+  lineinfile: dest=/etc/modules
+              line=nf_conntrack
+              insertafter=EOF
+
+- name: Netfilter should loads before sysctl.conf rules applied
+  modprobe: name=nf_conntrack_ipv4 state=present
+
+- sysctl: name=net.netfilter.nf_conntrack_max value="{{ conntrack_max }}"
+
+- name: Get current nf_conntrack hashsize
+  shell: "cat /sys/module/nf_conntrack/parameters/hashsize"
+  register: nf_conntrack_hashsize
+  changed_when: false
+  check_mode: no
+
+- name: Set nf_conntrack hashsize
+  shell: "echo {{ conntrack_hashsize }} > /sys/module/nf_conntrack/parameters/hashsize"
+  when: "nf_conntrack_hashsize.stdout != '{{ conntrack_hashsize }}'"
+
+- lineinfile: dest=/etc/rc.local
+              line="echo {{ conntrack_hashsize }} > /sys/module/nf_conntrack/parameters/hashsize"
+              regexp="> /sys/module/nf_conntrack/parameters/hashsize"
+              insertbefore="^exit 0$"
+
+- sysctl: name=net.netfilter.nf_conntrack_tcp_timeout_time_wait value=1
+- sysctl: name=net.netfilter.nf_conntrack_tcp_timeout_established value=600
