@@ -1,0 +1,22 @@
+---
+- name: Create script that clears all iptables rules
+  copy: src=files/iptables_clear.sh
+        dest=/sbin/iptables_clear.sh
+        mode=0700
+
+- name: /etc/rc.local instruction to clear all iptables rules
+  lineinfile: dest=/etc/rc.local
+              insertbefore="^exit 0$"
+              line=/sbin/iptables_clear.sh
+
+- name: /etc/rc.local instruction to restore iptables rules
+  lineinfile: dest=/etc/rc.local
+              insertbefore="^exit 0$"
+              line="iptables-restore < /etc/iptables.rules"
+
+- name: Create empty iptables rules file
+  file: dest=/etc/iptables.rules
+        state=touch
+
+- name: Clear iptables rules
+  shell: /sbin/iptables_clear.sh; iptables-restore < /etc/iptables.rules
