@@ -30,6 +30,10 @@
   lineinfile: dest={{ home_dir }}/.bashrc
               line='alias ave="source .env/bin/activate"'
 
+- name: Add pes alias
+  lineinfile: dest={{ home_dir }}/.bashrc
+              line='alias pes="pipenv shell"'
+
 - name: Configure git
   copy: src=files/.gitconfig
         dest={{ home_dir }}/.gitconfig
