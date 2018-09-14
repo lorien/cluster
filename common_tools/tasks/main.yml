@@ -76,3 +76,5 @@
 - pip: name=ps_mem
 
 - pip: name=pywtf
+
+- pip: name=pipenv
