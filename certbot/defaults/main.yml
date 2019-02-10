@@ -1,0 +1,5 @@
+---
+certbot_webroot_path: "/web"
+certbot_email: "foo@foo.com"
+certbot_live_cert: ""
+certbot_domains: []

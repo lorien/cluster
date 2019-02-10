@@ -8,12 +8,8 @@
 - copy:
     content: deb https://artifacts.elastic.co/packages/6.x/apt stable main 
     dest: /etc/apt/sources.list.d/elastic-6.x.list
+  register: test_conf
 
 - apt:
     update_cache: yes
-    name: elasticsearch
-
-- service:
-    name: elasticsearch
-    enabled: true
-    state: started
+  when: test_conf.changed

@@ -1,8 +1,30 @@
 ---
 - apt: name=nginx-full state=latest
 
+- file:
+    dest: /etc/nginx/sites-enabled/default
+    state: absent
+
 - name: Set up default nginx site
-  copy: dest=/etc/nginx/sites-available/default
+  copy: dest=/etc/nginx/sites-enabled/00-default
         src=files/nginx_default_site
+
+- file:
+    dest: /etc/nginx/ssl
+    state: directory
+
+- apt:
+    name: openssl
+
+- stat:
+    path: /etc/nginx/ssl/default_site.key
+  register: stat_key
+
+- stat:
+    path: /etc/nginx/ssl/default_site.crt
+  register: stat_crt
+
+- command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/default_site.key -out /etc/nginx/ssl/default_site.crt -subj '/CN=example.com/O=example.com/C=US'
+  when: not stat_key.stat.exists and not stat_crt.stat.exists
 
 - service: name=nginx enabled=yes state=reloaded

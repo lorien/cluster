@@ -1,4 +1,4 @@
 ---
 dependencies:
-- {role: java, when: deps}
+- {role: elasticsearch, when: deps}
 - {role: elastic_repo, when: deps}

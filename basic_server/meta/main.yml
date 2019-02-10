@@ -1,0 +1,26 @@
+dependencies:
+- {role: rclocal, when: deps}
+- {role: timezone, when: deps}
+- {role: opendns, when: deps}
+- {role: disable_ipv6, when: deps}
+- {role: sshd, when: deps}
+- {role: apt, when: deps}
+- {role: dnsmasq, when: deps}
+- {role: ntp, when: deps}
+- {role: basic_user, username: root, when: deps}
+- {role: basic_user, username: web, when: deps}
+- {role: limits, when: deps}
+- {role: root_pw, when: deps}
+- {role: setup_fs, when: deps}
+- {role: hostname, when: deps}
+- {role: locales, when: deps}
+- {role: common_tools, when: deps}
+- {role: nginx, when: deps}
+- {role: newrelic, when: deps}
+- {role: network_irq}
+- {role: iptables, when: deps}
+- {role: network_tune, when: deps}
+- {role: conntrack, when: deps}
+- {role: web_dir, web_dir_username: web, when: deps}
+- {role: cron_disable_mail, cron_user: 'root', when: deps}
+- {role: cron_disable_mail, cron_user: 'web', when: deps}

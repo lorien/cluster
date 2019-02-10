@@ -1,0 +1,63 @@
+---
+- apt_key: id=9DA31620334BD75D9DCB49F368818C72E52529D4 keyserver="keyserver.ubuntu.com"
+
+- apt_repository: repo="deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main"
+
+- apt: name=mongodb-org
+
+- service:
+    name: mongod
+    state: stopped
+
+- stat:
+    path: /var/lib/mongodb
+  register: mongodb_test
+
+- file:
+    path: /var/lib/mongodb
+    state: absent
+  when: mongodb_test.stat.islnk
+
+- file:
+    state: directory
+    owner: mongodb
+    group: mongodb
+    mode: "u=rwx,g=rwx,o=rx"
+    recurse: yes
+    path: "{{ mongodb_db_path }}"
+
+## Line from /etc/mongod.conf
+##  dbPath: /var/lib/mongodb
+#
+##- lineinfile:
+##    dest: /etc/mongod.conf
+##    regexp: "dbPath:"
+##    line: "  dbPath: {{ mongodb_db_path }}"
+#
+
+# date prefix
+- shell: date +%d%b | awk '{ print tolower($0) }'
+  register: date_suffix
+
+# Backup old mongodb storage is it is directory
+- command: "mv /var/lib/mongodb /var/lib/mongodb_{{ date_suffix.stdout }}"
+  when: mongodb_test.stat.isdir
+
+- file:
+    state: link
+    dest: /var/lib/mongodb
+    src: "{{ mongodb_db_path }}"
+  when: mongodb_test.stat.isdir
+#
+- service:
+    name: mongod
+    state: started
+    enabled: yes
+
+- copy: dest=/etc/init.d/disable-transparent-hugepages
+        src=files/disable-transparent-hugepages
+        mode=0755
+
+- service: name=disable-transparent-hugepages
+           state=started
+           enabled=yes

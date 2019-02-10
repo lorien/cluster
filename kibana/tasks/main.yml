@@ -1,0 +1,8 @@
+---
+- apt:
+    name: kibana
+
+- service:
+    name: kibana
+    enabled: true
+    state: started

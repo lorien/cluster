@@ -1,0 +1,8 @@
+---
+- apt:
+    name: filebeat
+
+#- service:
+#    name: filebeat
+#    enabled: true
+#    state: started

@@ -12,11 +12,23 @@
 - name: /etc/rc.local instruction to restore iptables rules
   lineinfile: dest=/etc/rc.local
               insertbefore="^exit 0$"
-              line="iptables-restore < /etc/iptables.rules"
+              line="cat /etc/iptables_nat.rules /etc/iptables_filter.rules | iptables-restore"
 
-- name: Create empty iptables rules file
-  file: dest=/etc/iptables.rules
-        state=touch
+- name: Create filter rules file
+  copy:
+    dest: /etc/iptables_filter.rules
+    force: no
+    content: |
+      * filter
+      COMMIT
 
-- name: Clear iptables rules
-  shell: /sbin/iptables_clear.sh; iptables-restore < /etc/iptables.rules
+- name: Create nat rules file
+  copy:
+    dest: /etc/iptables_nat.rules
+    force: no
+    content: |
+      * nat
+      COMMIT
+
+- name: Clear iptables rules and apply custom rules
+  shell: /sbin/iptables_clear.sh; cat /etc/iptables_nat.rules /etc/iptables_filter.rules | iptables-restore

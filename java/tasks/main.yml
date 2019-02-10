@@ -4,7 +4,11 @@
                   state=present
 
 - name: Add Java Repo APT key
-  apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=EEA14886
+  #apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=EEA14886
+  apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=C2518248EEA14886
+
+- apt:
+    update_cache: yes
 
 - name: Accept Java License
   debconf: name='oracle-java8-installer'
@@ -13,4 +17,4 @@
            vtype='select'
 
 - name: Install Java
-  apt: name=oracle-java8-installer state=latest force=yes
+  apt: name=oracle-java8-installer state=latest

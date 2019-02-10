@@ -4,6 +4,9 @@
         mode=u+x
   register: copy_res
 
+- apt:
+    name: bc
+
 - shell: /sbin/setup_irq.sh 
 
 - lineinfile: dest=/etc/rc.local

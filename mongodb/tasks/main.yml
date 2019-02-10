@@ -1,9 +1,15 @@
 ---
-- apt_key: id=0C49F3730359A14518585931BC711F9BA15703C6 keyserver="keyserver.ubuntu.com"
+- apt_key: id=9DA31620334BD75D9DCB49F368818C72E52529D4 keyserver="keyserver.ubuntu.com"
 
-- apt_repository: repo="deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main"
+- apt_repository: repo="deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main"
 
-- apt: name=mongodb-org
+- apt: name=mongodb-org-server
+
+- apt: name=mongodb-org-mongos
+
+- apt: name=mongodb-org-shell
+
+- apt: name=mongodb-org-tools
 
 - service:
     name: mongod
@@ -18,8 +24,7 @@
     path="{{ mongodb_db_path }}"
 
 # Line from /etc/mongod.conf
-#  dbPath: /var/lib/mongodb
-
+# dbPath: /var/lib/mongodb
 - lineinfile:
     dest: /etc/mongod.conf
     regexp: "dbPath:"
@@ -27,13 +32,13 @@
 
 - service:
     name: mongod
-    state: started
     enabled: yes
+    state: started
 
 #- copy: dest=/etc/init.d/disable-transparent-hugepages
 #        src=files/disable-transparent-hugepages
 #        mode=0755
-
+#
 #- service: name=disable-transparent-hugepages
 #           state=started
 #           enabled=yes

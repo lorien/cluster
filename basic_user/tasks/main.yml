@@ -34,6 +34,10 @@
   lineinfile: dest={{ home_dir }}/.bashrc
               line='alias ape="pipenv shell"'
 
+- name: Add srd alias
+  lineinfile: dest={{ home_dir }}/.bashrc
+              line='alias srd="screen -rd"'
+
 - name: Configure git
   copy: src=files/.gitconfig
         dest={{ home_dir }}/.gitconfig

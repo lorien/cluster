@@ -1,0 +1,8 @@
+---
+- apt:
+    name: logstash
+
+- service:
+    name: logstash
+    enabled: true
+    state: started

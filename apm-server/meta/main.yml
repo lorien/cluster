@@ -1,0 +1,3 @@
+---
+dependencies:
+  - {role: elastic_repo, when: deps}

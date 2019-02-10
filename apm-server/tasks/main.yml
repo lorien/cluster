@@ -1,0 +1,21 @@
+---
+- assert:
+    that: "apm_server_host != ''"
+
+- apt:
+    name: apm-server
+
+- service:
+    name: apm-server
+    enabled: true
+
+- lineinfile:
+    dest: /etc/apm-server/apm-server.yml
+    regexp: "^\\s*hosts:"
+    line: '  hosts: ["{{ apm_server_host }}"]'
+  register: test_conf
+
+- service:
+    name: apm-server
+    state: restarted
+  when: test_conf.changed

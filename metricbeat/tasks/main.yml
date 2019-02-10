@@ -1,0 +1,21 @@
+---
+- assert:
+    that: "metricbeat_host != ''"
+
+- apt:
+    name: metricbeat
+
+- service:
+    name: metricbeat
+    enabled: true
+
+- lineinfile:
+    dest: /etc/metricbeat/metricbeat.yml
+    regexp: "^\\s*hosts:"
+    line: '  hosts: ["{{ metricbeat_host }}"]'
+  register: test_conf
+
+- service:
+    name: metricbeat
+    state: restarted
+  when: test_conf.changed

@@ -1,0 +1,28 @@
+---
+- apt:
+    name: certbot
+
+- replace:
+    dest: /etc/cron.d/certbot
+    regexp: "certbot -q renew$"
+    replace: "certbot -q renew --allow-subset-of-names"
+
+- template:
+    src: files/cli.ini
+    dest: /etc/letsencrypt/cli.ini
+
+- local_action: stat path="{{ certbot_live_cert|default('/zzzzzzzz') }}"
+  register: test_live_cert_local
+
+- stat:
+    path: "/etc/letsencrypt/live/{{ certbot_domains.0 }}"
+  register: test_live_cert_remote
+
+- copy:
+    src: "{{ certbot_live_cert }}/"
+    dest: "/etc/letsencrypt/live/{{ certbot_domains.0 }}"
+  when: test_live_cert_local.stat.isdir and not test_live_cert_remote.stat.exists
+
+- service:
+    name: nginx
+    state: restarted
