@@ -1,14 +1,14 @@
 ---
 - set_fact:
-    home_dir: "{% if username == 'root' %}/root{% else %}/home/{{ username }}{% endif %}"
+    home_dir: "{% if user_username == 'root' %}/root{% else %}/home/{{ user_username }}{% endif %}"
 
 - name: Add user
-  user: name="{{ username }}" shell=/bin/bash
+  user: name="{{ user_username }}" shell=/bin/bash
 
 - name: Setup default editor
   copy: content="SELECTED_EDITOR=\"/usr/bin/vim\""
         dest={{ home_dir }}/.selected_editor
-        owner="{{ username }}" group="{{ username }}"
+        owner="{{ user_username }}" group="{{ user_username }}"
 
 - name: Update APT repos
   apt: update_cache=yes
@@ -20,7 +20,7 @@
 - name: Setup vim config
   copy: src=files/.vimrc
         dest={{ home_dir }}/.vimrc
-        owner="{{ username }}" group="{{ username }}"
+        owner="{{ user_username }}" group="{{ user_username }}"
 
 - name: Add supervisor alias
   lineinfile: dest={{ home_dir }}/.bashrc
@@ -41,9 +41,14 @@
 - name: Configure git
   copy: src=files/.gitconfig
         dest={{ home_dir }}/.gitconfig
-        owner="{{ username }}" group="{{ username }}"
+        owner="{{ user_username }}" group="{{ user_username }}"
 
 - name: Configure mercurial
   copy: src=files/.hgrc
         dest={{ home_dir }}/.hgrc
-        owner="{{ username }}" group="{{ username }}"
+        owner="{{ user_username }}" group="{{ user_username }}"
+
+- authorized_key:
+    user: "{{ user_username }}" 
+    key: "{{ user_rsa_pubkey }}"
+  when: user_username != "root" and user_rsa_pubkey != ""

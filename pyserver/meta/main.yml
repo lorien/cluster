@@ -1,30 +1,30 @@
 dependencies:
-- {role: rclocal, when: deps}
-- {role: timezone, when: deps}
-- {role: opendns, when: deps}
-- {role: disable_ipv6, when: deps}
-- {role: sshd, when: deps}
-- {role: apt, when: deps}
-- {role: dnsmasq, when: deps}
-- {role: ntp, when: deps}
-- {role: basic_user, username: root, when: deps}
-- {role: basic_user, username: web, when: deps}
-- {role: limits, when: deps}
-- {role: root_pw, when: deps}
-- {role: setup_fs, when: deps}
-- {role: hostname, when: deps}
-- {role: locales, when: deps}
-- {role: common_tools, when: deps}
-- {role: nginx, when: deps}
-- {role: supervisor, supervisor_add_user: web, when: deps}
-- {role: newrelic, when: deps}
+- {role: rclocal}
+- {role: timezone}
+- {role: opendns}
+- {role: disable_ipv6}
+- {role: sshd}
+- {role: apt}
+- {role: dnsmasq}
+- {role: ntp}
+- {role: basic_user, user_username: root}
+- {role: basic_user, user_username: web}
+- {role: limits}
+- {role: root_pw}
+- {role: setup_fs}
+- {role: hostname}
+- {role: locales}
+- {role: common_tools}
+- {role: nginx}
+- {role: supervisor, supervisor_add_user: web}
+- {role: newrelic}
 - {role: network_irq}
-- {role: iptables, when: deps}
-- {role: network_tune, when: deps}
-- {role: conntrack, when: deps}
-- {role: web_dir, web_dir_username: web, when: deps}
-#- {role: postgres, postgres_add_user: 'web', postgresql_version: 9.4, when: deps}
-#- {role: mongodb, when: deps, mongodb_db_path: /data/mongodb}
-- {role: redis, when: deps}
-- {role: cron_disable_mail, cron_user: 'root', when: deps}
-- {role: cron_disable_mail, cron_user: 'web', when: deps}
+- {role: iptables}
+- {role: network_tune}
+- {role: conntrack}
+- {role: web_dir, web_dir_username: web}
+#- {role: postgres, postgres_add_user: 'web', postgresql_version: 9.4}
+#- {role: mongodb, mongodb_db_path: /data/mongodb}
+- {role: redis}
+- {role: cron_disable_mail, cron_user: 'root'}
+- {role: cron_disable_mail, cron_user: 'web'}

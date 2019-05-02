@@ -1,0 +1,11 @@
+---
+- apt_key: url=https://repos.influxdata.com/influxdb.key
+
+- apt_repository: repo="deb https://repos.influxdata.com/debian stretch stable"
+
+- apt: name=influxdb
+
+- service:
+    name: influxdb
+    enabled: yes
+    state: started

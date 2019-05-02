@@ -1,0 +1,18 @@
+---
+- apt_key: url=https://repos.influxdata.com/influxdb.key
+
+- apt_repository: repo="deb https://repos.influxdata.com/debian stretch stable"
+
+- apt: name=chronograf
+
+#- copy:
+#    dest: /etc/telegraf/telegraf.d/output.conf
+#    content: |
+#      [[outputs.influxdb]]
+#      urls = ["http://{{ telegraf_influxdb_server }}"]
+#  when: telegraf_influxdb_server != ""
+
+- service:
+    name: chronograf
+    enabled: yes
+    state: restarted

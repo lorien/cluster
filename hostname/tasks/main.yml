@@ -1,6 +1,9 @@
 ---
 - name: Set hostname
-  hostname: name="{{ inventory_hostname }}"
+  hostname:
+    name: "{{ inventory_hostname }}"
 
 - name: Put unqualified hostname into /etc/hosts
-  lineinfile: dest=/etc/hosts line="127.0.0.1 {{ inventory_hostname}}"
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.1 {{ inventory_hostname}}"

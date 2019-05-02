@@ -1,8 +1,27 @@
 ---
 - name: Create script that clears all iptables rules
-  copy: src=files/iptables_clear.sh
-        dest=/sbin/iptables_clear.sh
-        mode=0700
+  copy:
+    dest: /sbin/iptables_clear.sh
+    mode: 0700
+    content: |
+      #!/bin/sh
+      iptables -F
+      iptables -X
+      iptables -t nat -F
+      iptables -t nat -X
+      iptables -t mangle -F
+      iptables -t mangle -X
+      iptables -P INPUT ACCEPT
+      iptables -P FORWARD ACCEPT
+      iptables -P OUTPUT ACCEPT
+
+- copy:
+    dest: /sbin/iptables_reload.sh
+    mode: 0700
+    content: |
+      #!/bin/sh
+      /sbin/iptables_clear.sh
+      cat /etc/iptables_nat.rules /etc/iptables_filter.rules | iptables-restore
 
 - name: /etc/rc.local instruction to clear all iptables rules
   lineinfile: dest=/etc/rc.local
@@ -31,4 +50,4 @@
       COMMIT
 
 - name: Clear iptables rules and apply custom rules
-  shell: /sbin/iptables_clear.sh; cat /etc/iptables_nat.rules /etc/iptables_filter.rules | iptables-restore
+  shell: /sbin/iptables_reload.sh

@@ -6,10 +6,10 @@
     #- bind9-host
     - apache2-utils
     - aptitude
-    - conntrack
     - curl
     - debconf-utils
     - firmware-linux-nonfree
+    - conntrack
     - g++
     - gcc
     - geoip-database
