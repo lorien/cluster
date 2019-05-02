@@ -1,26 +1,31 @@
 dependencies:
-- {role: rclocal}
-- {role: timezone}
-- {role: opendns}
-- {role: disable_ipv6}
-- {role: sshd}
-- {role: apt}
-- {role: dnsmasq}
-- {role: ntp}
-- {role: basic_user, username: root}
-- {role: basic_user, username: web}
-- {role: limits}
-- {role: root_pw}
-- {role: setup_fs}
-- {role: hostname}
-- {role: locales}
-- {role: common_tools}
-- {role: nginx}
-- {role: newrelic}
-- {role: network_irq}
-- {role: iptables}
-- {role: network_tune}
-- {role: conntrack}
-- {role: web_dir, web_dir_username: web}
-- {role: cron_disable_mail, cron_user: 'root'}
-- {role: cron_disable_mail, cron_user: 'web'}
+- role: lorien.cluster.rclocal
+- role: lorien.cluster.timezone
+- role: lorien.cluster.opendns
+- role: lorien.cluster.disable_ipv6
+- role: lorien.cluster.sshd
+- role: lorien.cluster.apt
+- role: lorien.cluster.dnsmasq
+- role: lorien.cluster.ntp
+- role: lorien.cluster.basic_user
+  username: root
+- role: lorien.cluster.basic_user
+  username: web
+- role: lorien.cluster.limits
+- role: lorien.cluster.root_pw
+- role: lorien.cluster.setup_fs
+- role: lorien.cluster.hostname
+- role: lorien.cluster.locales
+- role: lorien.cluster.common_tools
+- role: lorien.cluster.nginx
+- role: lorien.cluster.newrelic
+- role: lorien.cluster.network_irq
+- role: lorien.cluster.iptables
+- role: lorien.cluster.network_tune
+- role: lorien.cluster.conntrack
+- role: lorien.cluster.web_dir
+  web_dir_username: web
+- role: lorien.cluster.cron_disable_mail
+  cron_user: 'root'
+- role: lorien.cluster.cron_disable_mail
+  cron_user: 'web'

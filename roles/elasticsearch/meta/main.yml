@@ -1,4 +1,4 @@
 ---
 dependencies:
-- {role: java}
-- {role: elastic_repo}
+- role: lorien.cluster.java
+- role: lorien.cluster.elastic_repo
