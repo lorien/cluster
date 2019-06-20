@@ -1,0 +1,5 @@
+---
+#scaleway_ssd_fs: "ext4"
+#scaleway_ssd_mount_opt: "discard,noatime,nodiratime,errors=remount-ro" 
+scaleway_ssd_fs: "xfs"
+scaleway_ssd_mount_opts: "discard"
