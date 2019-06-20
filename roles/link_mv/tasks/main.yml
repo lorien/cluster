@@ -1,0 +1,27 @@
+--- 
+#- stat: path=/var/lib
+#  register: var_lib
+#
+#- shell: mv /var/lib /data
+#  when: var_lib.stat.islnk == False
+#
+#- file: dest=/var/lib
+#        src=/data/lib
+#        state=link
+#  when: var_lib.stat.islnk == False
+
+
+- stat:
+    path: "{{ link_mv_src }}"
+  register: test_src
+
+- shell: "mv {{ link_mv_src }} {{ link_mv_dst }}"
+  when: test_src.stat.islnk == False
+
+- file:
+    # File moved to `link_mv_dst`
+    # It must be linked to `link_mv_src`
+    src: "{{ link_mv_dst }}"
+    dest: "{{ link_mv_src }}"
+    state: link
+  when: test_src.stat.islnk == False
