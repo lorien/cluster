@@ -1,0 +1,32 @@
+---
+- stat:
+    path: /opt/proxychains/bin/proxychains4
+  register: binary_test
+
+- get_url:
+    url: https://github.com/rofl0r/proxychains-ng/archive/v4.14.tar.gz
+    dest: /tmp/proxychains-ng-4.14.tar.xz
+    checksum: sha512:75a1a4629d2b7ebac9b909a694b395339cf669fa4e23bfcc57938e46377b5619f31c9651d2bc457d1ad10ec1be7747981106392bf8bf65999cb7bb9c748d7e95
+  when: binary_test.stat.exists == False
+
+- unarchive:
+    src: /tmp/v4.14.tar.gz
+    dest: /tmp
+  when: binary_test.stat.exists == False
+
+- shell: ./configure --prefix=/opt/proxychains
+  args:
+    chdir: /tmp/proxychains-ng-4.14
+  when: binary_test.stat.exists == False
+
+- shell: make && make install
+  args:
+    chdir: /tmp/proxychains-ng-4.14
+  when: binary_test.stat.exists == False
+
+- copy:
+    dest: /etc/proxychains.conf
+    content: |
+      [ProxyList]
+      socks5 127.0.0.1 9050
+  when: binary_test.stat.exists == False
