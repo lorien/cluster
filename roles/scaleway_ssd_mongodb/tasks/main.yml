@@ -1,0 +1,39 @@
+---
+- shell: lsblk -no FSTYPE /dev/sda1
+  register: test_fs
+
+- assert:
+    that:
+      - test_fs.stdout == "xfs"
+
+- mount:
+    src: /dev/sda1
+    name: /data
+    opts: discard
+    fstype: xfs
+    state: mounted
+
+- file:
+    path: /data/lib
+    state: directory
+
+- stat:
+    path: /data/lib/mongodb
+  register: test_dir
+
+- service:
+    name: mongod
+    state: stopped
+  when: test_dir.stat.exists == False
+
+- include_role:
+    name: link_mv
+  vars:
+    link_mv_src: /var/lib/mongodb
+    link_mv_dst: /data/lib/mongodb
+  when: test_dir.stat.exists == False
+
+- service:
+    name: mongod
+    state: started
+  when: test_dir.stat.exists == False

@@ -1,0 +1,3 @@
+---
+dependencies:
+- lorien.cluster.mongodb
