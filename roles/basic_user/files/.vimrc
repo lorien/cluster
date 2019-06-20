@@ -10,6 +10,8 @@ set nocp " not compatible with old VI
 set incsearch " search while typing
 set hidden " do not raise warning if user switches between unsaved buffers
 let mapleader = ','
+set timeoutlen=1000
+set ttimeoutlen=0
 
 filetype plugin indent on
 
