@@ -67,6 +67,8 @@
     - ethtool
     - libffi-dev
     - bc
+    - xfsprogs
+    - tor
 
 - name: Install python packages
   pip: executable={{ item[0] }} name={{ item[1] }}
@@ -74,8 +76,13 @@
     - [ 'pip2', 'pip3' ]
     - [ 'virtualenv' ]
 
-- pip: name=ps_mem
+- pip:
+    name: "{{ item }}"
+  with_items:
+    - ps_mem
+    - pywtf
+    - pipenv
 
-- pip: name=pywtf
-
-- pip: name=pipenv
+- pip:
+    name: sr
+    executable: pip2
