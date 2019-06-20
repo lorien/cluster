@@ -1,20 +1,21 @@
 ---
-- name: Add Java Repo
-  apt_repository: repo='deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main'
-                  state=present
-
-- name: Add Java Repo APT key
-  #apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=EEA14886
-  apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=C2518248EEA14886
-
-- apt:
-    update_cache: yes
+#- name: Add Java Repo APT key
+#  #apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=C2518248EEA14886
+#  apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=EA8CACC073C3DB2A
+#
+#- name: Add Java Repo
+#  #apt_repository: repo='deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main'
+#  apt_repository: repo='deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main'
+#                  state=present
+#
+#- apt:
+#    update_cache: yes
 
 - name: Accept Java License
-  debconf: name='oracle-java8-installer'
-           question='shared/accepted-oracle-license-v1-1'
+  debconf: name='oracle-java11-installer'
+           question='shared/accepted-oracle-license-v1-2'
            value='true'
            vtype='select'
 
 - name: Install Java
-  apt: name=oracle-java8-installer state=latest
+  apt: name=oracle-java11-installer state=latest
