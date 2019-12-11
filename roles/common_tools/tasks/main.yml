@@ -69,6 +69,13 @@
     - bc
     - xfsprogs
     - tor
+    - apparmor
+    - p7zip-full
+    - rsync
+
+- shell: python2 -m pip install -U pip
+
+- shell: python3 -m pip install -U pip
 
 - name: Install python packages
   pip: executable={{ item[0] }} name={{ item[1] }}
@@ -79,8 +86,6 @@
 - pip:
     name: "{{ item }}"
   with_items:
-    - ps_mem
-    - pywtf
     - pipenv
 
 - pip:
