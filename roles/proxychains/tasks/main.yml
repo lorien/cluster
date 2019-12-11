@@ -1,32 +1,58 @@
 ---
-- stat:
-    path: /opt/proxychains/bin/proxychains4
-  register: binary_test
-
 - get_url:
     url: https://github.com/rofl0r/proxychains-ng/archive/v4.14.tar.gz
-    dest: /tmp/proxychains-ng-4.14.tar.xz
-    checksum: sha512:75a1a4629d2b7ebac9b909a694b395339cf669fa4e23bfcc57938e46377b5619f31c9651d2bc457d1ad10ec1be7747981106392bf8bf65999cb7bb9c748d7e95
-  when: binary_test.stat.exists == False
+    dest: /tmp/proxychains-ng-4.14.tar.gz
+    checksum: sha512:8388b3f7c2964bf49429b7dfbe8b6f79ce1967f2bcd93bf2b2c16d1a8d0a45bf7c7d1b57f83ca73319104f53545ef61852bf9d39ee512c90a96ca49e286a4006
 
 - unarchive:
-    src: /tmp/v4.14.tar.gz
+    src: /tmp/proxychains-ng-4.14.tar.gz
+    remote_src: yes
     dest: /tmp
-  when: binary_test.stat.exists == False
 
 - shell: ./configure --prefix=/opt/proxychains
   args:
     chdir: /tmp/proxychains-ng-4.14
-  when: binary_test.stat.exists == False
 
 - shell: make && make install
   args:
     chdir: /tmp/proxychains-ng-4.14
-  when: binary_test.stat.exists == False
 
 - copy:
     dest: /etc/proxychains.conf
     content: |
+      localnet 127.0.0.0/255.255.255.0
+      random_chain
+
       [ProxyList]
       socks5 127.0.0.1 9050
-  when: binary_test.stat.exists == False
+      socks5 127.0.0.1 9060
+      socks5 127.0.0.1 9061
+      socks5 127.0.0.1 9062
+      socks5 127.0.0.1 9063
+      socks5 127.0.0.1 9064
+      socks5 127.0.0.1 9065
+      socks5 127.0.0.1 9066
+      socks5 127.0.0.1 9067
+      socks5 127.0.0.1 9068
+      socks5 127.0.0.1 9069
+      socks5 127.0.0.1 9070
+      socks5 127.0.0.1 9071
+      socks5 127.0.0.1 9072
+      socks5 127.0.0.1 9073
+      socks5 127.0.0.1 9074
+      socks5 127.0.0.1 9075
+      socks5 127.0.0.1 9076
+      socks5 127.0.0.1 9077
+      socks5 127.0.0.1 9078
+      socks5 127.0.0.1 9079
+      socks5 127.0.0.1 9080
+      socks5 127.0.0.1 9081
+      socks5 127.0.0.1 9082
+      socks5 127.0.0.1 9083
+      socks5 127.0.0.1 9084
+      socks5 127.0.0.1 9085
+      socks5 127.0.0.1 9086
+      socks5 127.0.0.1 9087
+      socks5 127.0.0.1 9088
+      socks5 127.0.0.1 9089
+      socks5 127.0.0.1 9090
