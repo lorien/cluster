@@ -5,17 +5,29 @@
 
 - apt: name=dnsmasq
 
-- shell: chattr -i /etc/resolv.conf
-
-- copy: src=files/dnsmasq.conf
-        dest=/etc/dnsmasq.conf
-
-- copy: src=files/resolv.conf
-        dest=/etc/resolv.conf
-
-- shell: chattr +i /etc/resolv.conf
+- copy:
+    dest: /etc/dnsmasq.conf
+    content: |
+      domain-needed
+      bogus-priv
+      neg-ttl=3600
+      server=8.8.8.8 # google
+      server=8.8.4.4 # google
+      server=1.1.1.1 # cloudflare
+      server=1.0.0.1 # cloudflare
+      cache-size=10000
+      dns-forward-max=300
 
 - service: name=dnsmasq state=restarted
+
+- shell: chattr -i /etc/resolv.conf
+
+- copy:
+    dest: /etc/resolv.conf
+    content: |
+      nameserver 127.0.0.1
+
+- shell: chattr +i /etc/resolv.conf
 
 - name: Fix suid bit on /bin/ping
   file: dest=/bin/ping
