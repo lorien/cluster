@@ -7,7 +7,7 @@
               insertafter=EOF
 
 - name: Netfilter should loads before sysctl.conf rules applied
-  modprobe: name=nf_conntrack_ipv4 state=present
+  modprobe: name=nf_conntrack state=present
 
 - sysctl: name=net.netfilter.nf_conntrack_max value="{{ conntrack_max }}"
 
