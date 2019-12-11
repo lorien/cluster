@@ -19,8 +19,9 @@ dependencies:
 - role: lorien.cluster.common_tools
 - role: lorien.cluster.nginx
 - role: lorien.cluster.supervisor
+- role: lorien.cluster.logrotate_weblog
   supervisor_add_user: web
-- role: lorien.cluster.newrelic
+#- role: lorien.cluster.newrelic
 - role: lorien.cluster.network_irq
 - role: lorien.cluster.iptables
 - role: lorien.cluster.network_tune
