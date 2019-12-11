@@ -1,7 +1,24 @@
 ---
+# Things requied to ansibel apt module works OK
+# things begin
+- apt:
+    name: python-setuptools
+
+- apt:
+    name: python-pip
+
+- pip:
+    name: python-apt
+# things end
+
 - name: Setup APT sources
-  copy: src=files/sources.list
-        dest=/etc/apt/sources.list
+  copy:
+    dest: /etc/apt/sources.list
+    content: |
+      deb http://ftp.fr.debian.org/debian buster main non-free contrib
+      deb-src http://ftp.fr.debian.org/debian buster main non-free contrib
+      deb http://security.debian.org/ buster/updates main contrib non-free
+
 
 - name: Disable installing suggested APT packages
   copy: content="APT::Install-Suggested \"false\";" dest=/etc/apt/apt.conf.d/07custom
@@ -14,8 +31,12 @@
   file: dest=/etc/apt/preferences.d/02testing
         state=absent
 
-- copy: src=files/01stable
-        dest=/etc/apt/preferences.d/01stable
+- copy:
+    dest: /etc/apt/preferences.d/01stable
+    content: |
+      Package: *
+      Pin: release o=Debian,a=stable
+      Pin-Priority: 500
 
 - name: Update APT repos
   apt: update_cache=yes
