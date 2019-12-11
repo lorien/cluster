@@ -1,0 +1,18 @@
+---
+- copy:
+    dest: /etc/logrotate.d/nginx_sv_weblog
+    content: |
+      /web/log/*.log {
+              weekly
+              missingok
+              rotate 7
+              compress
+              delaycompress
+              notifempty
+              create 0640 www-data adm
+              sharedscripts
+              postrotate
+                      invoke-rc.d nginx rotate >/dev/null 2>&1
+                      pkill -USR2 supervisord
+              endscript
+      }
