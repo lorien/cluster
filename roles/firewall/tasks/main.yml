@@ -1,0 +1,107 @@
+---
+- file:
+    dest: /etc/firewall
+    state: directory
+
+- copy:
+    dest: /etc/firewall/init.sh
+    content: |
+      #!/bin/bash
+
+      # Accept everything,
+      # Will reject non-matched packets at the end of setup
+      iptables -P INPUT ACCEPT
+      iptables -P FORWARD ACCEPT
+      iptables -P OUTPUT ACCEPT
+      ip6tables -P INPUT ACCEPT
+      ip6tables -P FORWARD ACCEPT
+      ip6tables -P OUTPUT ACCEPT
+
+      # Create custom chain and jump to it
+      iptables -N INPUT-CUSTOM
+      iptables -A INPUT -j INPUT-CUSTOM
+      ip6tables -N INPUT-CUSTOM
+      ip6tables -A INPUT -j INPUT-CUSTOM
+
+      # This is default terminal rules
+      iptables -A INPUT -j REJECT
+      iptables -A FORWARD -j REJECT
+      ip6tables -A INPUT -j REJECT
+      ip6tables -A FORWARD -j REJECT
+
+- copy:
+    dest: /etc/firewall/setup.sh
+    content: |
+      #!/bin/bash
+
+      # Ensure custom chains are clean
+      iptables -F INPUT-CUSTOM
+      if $(iptables-save | grep -q ":DOCKER-USER"); then
+          iptables -F DOCKER-USER
+      fi
+      ip6tables -F INPUT-CUSTOM
+
+      ## Default allow rules for any system
+      iptables -A INPUT-CUSTOM -i lo -j ACCEPT
+      iptables -A INPUT-CUSTOM -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      iptables -A INPUT-CUSTOM -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+      iptables -A INPUT-CUSTOM -p tcp --dport 22 -j ACCEPT
+
+      ip6tables -A INPUT-CUSTOM -i lo -j ACCEPT
+      ip6tables -A INPUT-CUSTOM -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      ip6tables -A INPUT-CUSTOM -p icmp -j ACCEPT
+      ip6tables -A INPUT-CUSTOM -p tcp --dport 22 -j ACCEPT
+
+      # Start custom rules
+      # ???
+      # End custom rules
+
+      # Return from custom chains
+      # Is it neccessary?
+      iptables -A INPUT-CUSTOM -j RETURN
+      ip6tables -A INPUT-CUSTOM -j RETURN
+      if $(iptables-save | grep -q ":DOCKER-USER"); then
+          iptables -A DOCKER-USER -j RETURN
+      fi
+
+- copy:
+    dest: /etc/systemd/system/firewall-init.service
+    content: |
+      [Unit]
+      Description=Firewall Init
+      After=network.target iptables.service firewalld.service fail2ban.service
+      Before=docker.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/etc/firewall/init.sh
+
+      [Install]
+      WantedBy=multi-user.target
+
+- copy:
+    dest: /etc/systemd/system/firewall-setup.service
+    content: |
+      [Unit]
+      Description=Firewall Setup
+      Requires=firewall-init.service
+      After=firewall-init.service docker.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/etc/firewall/setup.sh
+
+      [Install]
+      WantedBy=multi-user.target
+
+- service:
+    name: firewall-init
+    enabled: yes
+    state: started
+
+- service:
+    name: firewall-setup
+    enabled: yes
+    state: started
