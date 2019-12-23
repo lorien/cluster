@@ -1,0 +1,24 @@
+- apt:
+    name: python-setuptools
+
+- apt:
+    name: python3-setuptools
+
+- get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /tmp/get-pip.py
+
+- shell: python2 /tmp/get-pip.py
+
+- shell: python3 /tmp/get-pip.py
+
+- pip:
+    executable: pip3
+    name: "{{ item }}"
+  with_items:
+    - pipenv
+    - virtualenv
+
+- pip:
+    name: sr
+    executable: pip2
