@@ -12,13 +12,21 @@
 - apt:
     name: docker-ce-cli
 
+- name: Fix broken ExecStart
+  lineinfile:
+    dest: /lib/systemd/system/docker.service
+    regexp: ^\\1$
+    line: ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+
 - lineinfile:
     dest: /lib/systemd/system/docker.service
     regexp: ^ExecStart=/usr/bin/dockerd
     line: ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --iptables=false
 
-- service:
+- systemd:
     name: docker
+    daemon_reload: yes
     state: restarted
 
 - blockinfile:
@@ -61,5 +69,7 @@
     groups: docker
     append: yes
   with_items: "{{ docker_users }}"
+
 - pip:
+    executable: pip3
     name: docker

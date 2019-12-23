@@ -17,10 +17,10 @@ dependencies:
 - role: lorien.cluster.hostname
 - role: lorien.cluster.locales
 - role: lorien.cluster.common_tools
+- role: lorien.cluster.python
 - role: lorien.cluster.nginx
 - role: lorien.cluster.newrelic
 - role: lorien.cluster.network_irq
-- role: lorien.cluster.iptables
 - role: lorien.cluster.network_tune
 - role: lorien.cluster.conntrack
 - role: lorien.cluster.web_dir

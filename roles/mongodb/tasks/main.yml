@@ -1,45 +1,70 @@
 ---
-- apt_key:
-    url: https://www.mongodb.org/static/pgp/server-4.2.asc
+#- apt_key:
+#    url: https://www.mongodb.org/static/pgp/server-4.2.asc
+#
+#- apt_repository: repo="deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main"
+#
+#- apt: name=mongodb-org-server
+#
+#- apt: name=mongodb-org-mongos
+#
+#- apt: name=mongodb-org-shell
+#
+#- apt: name=mongodb-org-tools
+#
+#- service:
+#    name: mongod
+#    state: stopped
+#
+#- file:
+#    state=directory
+#    owner=mongodb
+#    group=mongodb
+#    mode="u=rwx,g=rwx,o=rx"
+#    recurse=yes
+#    path="{{ mongodb_db_path }}"
 
-- apt_repository: repo="deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main"
+- copy:
+    dest: /etc/init.d/disable-transparent-hugepages
+    mode: 0755
+    content: |
+      #!/bin/sh
+      ### BEGIN INIT INFO
+      # Provides:          disable-transparent-hugepages
+      # Required-Start:    $local_fs
+      # Required-Stop:
+      # X-Start-Before:    mongod mongodb-mms-automation-agent
+      # Default-Start:     2 3 4 5
+      # Default-Stop:      0 1 6
+      # Short-Description: Disable Linux transparent huge pages
+      # Description:       Disable Linux transparent huge pages, to improve
+      #                    database performance.
+      ### END INIT INFO
 
-- apt: name=mongodb-org-server
+      case $1 in
+        start)
+          if [ -d /sys/kernel/mm/transparent_hugepage ]; then
+            thp_path=/sys/kernel/mm/transparent_hugepage
+          elif [ -d /sys/kernel/mm/redhat_transparent_hugepage ]; then
+            thp_path=/sys/kernel/mm/redhat_transparent_hugepage
+          else
+            return 0
+          fi
 
-- apt: name=mongodb-org-mongos
+          echo 'never' > ${thp_path}/enabled
+          echo 'never' > ${thp_path}/defrag
 
-- apt: name=mongodb-org-shell
-
-- apt: name=mongodb-org-tools
+          unset thp_path
+          ;;
+      esac
 
 - service:
-    name: mongod
-    state: stopped
+    name: disable-transparent-hugepages
+    state: started
+    enabled: yes
 
-- file:
-    state=directory
-    owner=mongodb
-    group=mongodb
-    mode="u=rwx,g=rwx,o=rx"
-    recurse=yes
-    path="{{ mongodb_db_path }}"
-
-# Line from /etc/mongod.conf
-# dbPath: /var/lib/mongodb
-- lineinfile:
-    dest: /etc/mongod.conf
-    regexp: "dbPath:"
-    line: "  dbPath: {{ mongodb_db_path }}"
 
 - service:
     name: mongod
     enabled: yes
     state: started
-
-#- copy: dest=/etc/init.d/disable-transparent-hugepages
-#        src=files/disable-transparent-hugepages
-#        mode=0755
-#
-#- service: name=disable-transparent-hugepages
-#           state=started
-#           enabled=yes

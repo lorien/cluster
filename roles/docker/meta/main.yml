@@ -1,3 +1,4 @@
 ---
 dependencies:
 - role: lorien.cluster.apt_transport_https
+- role: lorien.cluster.python

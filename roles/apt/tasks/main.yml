@@ -1,16 +1,4 @@
 ---
-# Things requied to ansibel apt module works OK
-# things begin
-- apt:
-    name: python-setuptools
-
-- apt:
-    name: python-pip
-
-- pip:
-    name: python-apt
-# things end
-
 - name: Setup APT sources
   copy:
     dest: /etc/apt/sources.list
@@ -21,7 +9,10 @@
 
 
 - name: Disable installing suggested APT packages
-  copy: content="APT::Install-Suggested \"false\";" dest=/etc/apt/apt.conf.d/07custom
+  copy:
+    content: |
+      APT::Install-Suggested "false";
+    dest: /etc/apt/apt.conf.d/07custom
 
 - name: Remove deprecated file
   file: path=/etc/apt/preferences.d/01custom
@@ -38,15 +29,20 @@
       Pin: release o=Debian,a=stable
       Pin-Priority: 500
 
-- name: Update APT repos
-  apt: update_cache=yes
+- name: Instal python apt package to allow ansible operate apt commands
+  shell: apt-get install python3-apt
+
+- name: Update APT packages index
+  apt:
+    update_cache: yes
 
 - name: Install new debian keyring
   apt: name=debian-archive-keyring
        allow_unauthenticated=yes
 
-- name: Fix apt errors
-  shell: apt-get -yf install
+#- name: Fix apt errors
+#  shell: apt-get -yf install
 
 - name: APT dist-upgrade
-  apt: upgrade=dist
+  apt:
+    upgrade: dist
