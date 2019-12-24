@@ -30,7 +30,7 @@
       Pin-Priority: 500
 
 - name: Instal python apt package to allow ansible operate apt commands
-  shell: apt-get install python3-apt
+  shell: apt-get install -y python3-apt
 
 - name: Update APT packages index
   apt:

@@ -1,28 +1,16 @@
 ---
-#- apt_key:
-#    url: https://www.mongodb.org/static/pgp/server-4.2.asc
-#
-#- apt_repository: repo="deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main"
-#
-#- apt: name=mongodb-org-server
-#
-#- apt: name=mongodb-org-mongos
-#
-#- apt: name=mongodb-org-shell
-#
-#- apt: name=mongodb-org-tools
-#
-#- service:
-#    name: mongod
-#    state: stopped
-#
-#- file:
-#    state=directory
-#    owner=mongodb
-#    group=mongodb
-#    mode="u=rwx,g=rwx,o=rx"
-#    recurse=yes
-#    path="{{ mongodb_db_path }}"
+- apt_key:
+    url: https://www.mongodb.org/static/pgp/server-4.2.asc
+
+- apt_repository: repo="deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main"
+
+- apt: name=mongodb-org-server
+
+- apt: name=mongodb-org-mongos
+
+- apt: name=mongodb-org-shell
+
+- apt: name=mongodb-org-tools
 
 - copy:
     dest: /etc/init.d/disable-transparent-hugepages
@@ -63,8 +51,32 @@
     state: started
     enabled: yes
 
-
 - service:
     name: mongod
     enabled: yes
     state: started
+
+# Handle NUMA issue
+
+- name: Detecting NUMA
+  shell: numactl --hardware | grep -q 'node   0   1'
+  register: reg_numactl
+  failed_when: reg_numactl.rc > 1
+
+- name: Detecting MongoDB NUMA service
+  shell: cat /lib/systemd/system/mongod.service | grep -q 'ExecStart=numactl --interleave=all'
+  register: reg_mongod_numactl
+  failed_when: reg_mongod_numactl.rc > 1
+
+- lineinfile:
+    dest: /lib/systemd/system/mongod.service
+    regexp: "^ExecStart=/usr/bin/mongod"
+    line: ExecStart=numactl --interleave=all /usr/bin/mongod --config /etc/mongod.conf
+  when: reg_numactl.rc == 0 and reg_mongod_numactl.rc == 1
+
+- systemd:
+    name: mongod
+    daemon_reload: yes
+    state: restarted
+  when: reg_numactl.rc == 0 and reg_mongod_numactl.rc == 1
+    
