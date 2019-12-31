@@ -1,9 +1,13 @@
 ---
-- apt_key: url=https://repos.influxdata.com/influxdb.key
+#- apt_key: url=https://repos.influxdata.com/influxdb.key
 
-- apt_repository: repo="deb https://repos.influxdata.com/debian stretch stable"
+#- apt_repository: repo="deb https://repos.influxdata.com/debian buster stable"
+#
+#- apt: name=influxdb
 
-- apt: name=influxdb
+# 1.7.7 & 1.7.8 - slow startup of CLI influx command
+- apt:
+    deb: https://dl.influxdata.com/influxdb/releases/influxdb_1.7.6_amd64.deb
 
 - service:
     name: influxdb
