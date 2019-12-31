@@ -29,7 +29,10 @@
       Pin: release o=Debian,a=stable
       Pin-Priority: 500
 
-- name: Instal python apt package to allow ansible operate apt commands
+- name: Instal python2 apt package to allow ansible operate apt commands
+  shell: apt-get install -y python-apt
+
+- name: Instal python3 apt package to allow ansible operate apt commands
   shell: apt-get install -y python3-apt
 
 - name: Update APT packages index
