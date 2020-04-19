@@ -5,64 +5,67 @@
 
 - copy:
     dest: /etc/firewall/init.sh
+    mode: 0700
     content: |
       #!/bin/bash
 
-      # Accept everything,
-      # Will reject non-matched packets at the end of setup
-      iptables -P INPUT ACCEPT
-      iptables -P FORWARD ACCEPT
+      DEFAULT_POLICY="ACCEPT"
+      INPUT_CUSTOM="INPUT-CUSTOM"
+
+      iptables -P INPUT $DEFAULT_POLICY
+      iptables -P FORWARD $DEFAULT_POLICY
       iptables -P OUTPUT ACCEPT
-      ip6tables -P INPUT ACCEPT
-      ip6tables -P FORWARD ACCEPT
-      ip6tables -P OUTPUT ACCEPT
+      iptables -N $INPUT_CUSTOM
+      iptables -A INPUT -j $INPUT_CUSTOM
 
-      # Create custom chain and jump to it
-      iptables -N INPUT-CUSTOM
-      iptables -A INPUT -j INPUT-CUSTOM
-      ip6tables -N INPUT-CUSTOM
-      ip6tables -A INPUT -j INPUT-CUSTOM
-
-      # This is default terminal rules
-      iptables -A INPUT -j REJECT
-      iptables -A FORWARD -j REJECT
-      ip6tables -A INPUT -j REJECT
-      ip6tables -A FORWARD -j REJECT
+      if ip6tables -V > /dev/null 2>&1; then
+          ip6tables -P INPUT $DEFAULT_POLICY
+          ip6tables -P FORWARD $DEFAULT_POLICY
+          ip6tables -P OUTPUT ACCEPT
+          ip6tables -N $INPUT_CUSTOM
+          ip6tables -A INPUT -j $INPUT_CUSTOM
+      fi
 
 - copy:
     dest: /etc/firewall/setup.sh
+    mode: 0700
     content: |
       #!/bin/bash
 
-      # Ensure custom chains are clean
-      iptables -F INPUT-CUSTOM
-      if $(iptables-save | grep -q ":DOCKER-USER"); then
-          iptables -F DOCKER-USER
+      INPUT_CUSTOM="INPUT-CUSTOM"
+
+      iptables -F $INPUT_CUSTOM
+      iptables -F DOCKER-USER
+      if [ ip6tables -V > /dev/null 2>&1; then
+          ip6tables -F $INPUT_CUSTOM
       fi
-      ip6tables -F INPUT-CUSTOM
 
-      ## Default allow rules for any system
-      iptables -A INPUT-CUSTOM -i lo -j ACCEPT
-      iptables -A INPUT-CUSTOM -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-      iptables -A INPUT-CUSTOM -p icmp -m icmp --icmp-type echo-request -j ACCEPT
-      iptables -A INPUT-CUSTOM -p tcp --dport 22 -j ACCEPT
-
-      ip6tables -A INPUT-CUSTOM -i lo -j ACCEPT
-      ip6tables -A INPUT-CUSTOM -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-      ip6tables -A INPUT-CUSTOM -p icmp -j ACCEPT
-      ip6tables -A INPUT-CUSTOM -p tcp --dport 22 -j ACCEPT
-
-      # Start custom rules
-      # ???
-      # End custom rules
-
-      # Return from custom chains
-      # Is it neccessary?
-      iptables -A INPUT-CUSTOM -j RETURN
-      ip6tables -A INPUT-CUSTOM -j RETURN
-      if $(iptables-save | grep -q ":DOCKER-USER"); then
-          iptables -A DOCKER-USER -j RETURN
+      #iptables -A $INPUT_CUSTOM -i lo -j ACCEPT -m comment --comment "Accept loopback traffic"
+      iptables -A $INPUT_CUSTOM -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "Accept established, related"
+      if [ ip6tables -V > /dev/null 2>&1; then
+          #ip6tables -A $INPUT_CUSTOM -i lo -j ACCEPT -m comment --comment "Accept loopback traffic"
+          ip6tables -A $INPUT_CUSTOM -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "Accept established, related traffic"
       fi
+      #iptables -A $INPUT_CUSTOM -p icmp -m icmp --icmp-type echo-request -j ACCEPT -m comment --comment "Accept pings"
+      #iptables -A $INPUT_CUSTOM -p tcp --dport 22 -j ACCEPT -m comment --comment "Accept SSH"
+
+      source /etc/firewall/user_setup.sh
+
+      iptables -A $INPUT_CUSTOM -j RETURN
+      iptables -A DOCKER-USER -j RETURN
+      if [ ip6tables -V > /dev/null 2>&1; then
+          ip6tables -A $INPUT_CUSTOM -j RETURN
+      fi
+
+
+- copy:
+    dest: /etc/firewall/user_setup.sh
+    mode: 0700
+    content: |
+      #!/bin/bash
+
+      INPUT_CUSTOM="INPUT-CUSTOM"
+      # custom config begins
 
 - copy:
     dest: /etc/systemd/system/firewall-init.service
@@ -81,10 +84,10 @@
       WantedBy=multi-user.target
 
 - copy:
-    dest: /etc/systemd/system/firewall-setup.service
+    dest: /etc/systemd/system/firewall.service
     content: |
       [Unit]
-      Description=Firewall Setup
+      Description=Firewall Rules
       Requires=firewall-init.service
       After=firewall-init.service docker.service
 
@@ -96,12 +99,28 @@
       [Install]
       WantedBy=multi-user.target
 
+- copy:
+    dest: /etc/firewall/clear.sh
+    mode: 0700
+    content: |
+      #!/bin/bash
+
+      iptables -F
+      iptables -X
+      iptables -t nat -F
+      iptables -t nat -X
+      iptables -t mangle -F
+      iptables -t mangle -X
+      iptables -P INPUT ACCEPT
+      iptables -P FORWARD ACCEPT
+      iptables -P OUTPUT ACCEPT
+
 - service:
     name: firewall-init
     enabled: yes
     state: started
 
 - service:
-    name: firewall-setup
+    name: firewall
     enabled: yes
     state: started
