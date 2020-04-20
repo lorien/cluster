@@ -1,0 +1,27 @@
+---
+- file:
+    dest: /sbin/iptables_clear.sh
+    state: absent
+
+- file:
+    dest: /sbin/iptables_reload.sh
+    state: absent
+
+- file:
+    dest: /etc/iptables_filter.rules
+    state: absent
+
+- file:
+    dest: /etc/iptables_nat.rules
+    state: absent
+
+- lineinfile:
+    dest: /etc/rc.local
+    line: "/sbin/iptables_clear.sh"
+    state: absent
+
+- name: /etc/rc.local instruction to restore iptables rules
+  lineinfile:
+    dest: /etc/rc.local
+    line: "cat /etc/iptables_nat.rules /etc/iptables_filter.rules | iptables-restore"
+    state: absent
