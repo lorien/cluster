@@ -12,6 +12,7 @@
 - apt:
     name: docker-ce-cli
 
+# TODO: remove
 - name: Fix broken ExecStart
   lineinfile:
     dest: /lib/systemd/system/docker.service
@@ -20,7 +21,7 @@
 
 - lineinfile:
     dest: /lib/systemd/system/docker.service
-    regexp: ^(ExecStart=/usr/bin/dockerd.*)--iptables=false
+    regexp: ^(ExecStart=/usr/bin/dockerd.*) *--iptables=false
     line: \1
     backrefs: yes
 

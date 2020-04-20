@@ -118,9 +118,16 @@
 - service:
     name: firewall-init
     enabled: yes
-    state: started
+    state: restarted
+
+- service_facts:
+
+- service:
+    name: docker
+    state: restarted
+  when: "'docker' in services"
 
 - service:
     name: firewall
     enabled: yes
-    state: started
+    state: restarted
