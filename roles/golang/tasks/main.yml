@@ -1,0 +1,44 @@
+---
+- file:
+    dest: /root/download
+    state: directory
+
+- file:
+    dest: /root/download/golang_files
+    state: directory
+
+- get_url:
+    url: https://dl.google.com/go/go1.13.linux-amd64.tar.gz
+    dest: /root/download/go.tar.gz
+
+- unarchive:
+    remote_src: yes
+    src: /root/download/go.tar.gz
+    dest: /root/download/golang_files
+
+- file:
+    dest: /opt/go
+    state: absent
+
+- copy:
+    remote_src: yes
+    src: /root/download/golang_files/go
+    dest: /opt
+
+- blockinfile:
+    path: /root/.bashrc
+    marker_begin: golan-begin
+    marker_end: golan-end
+    content: |
+      export GOROOT=/opt/go
+      export GOPATH=$HOME/go
+      export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+- blockinfile:
+    path: /home/web/.bashrc
+    marker_begin: golan-begin
+    marker_end: golan-end
+    content: |
+      export GOROOT=/opt/go
+      export GOPATH=$HOME/go
+      export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
