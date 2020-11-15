@@ -18,6 +18,7 @@
   with_items:
     - pipenv
     - virtualenv
+    - cookiecutter
 
 - pip:
     name: sr

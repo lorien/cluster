@@ -1,21 +1,21 @@
 ---
-#- file:
-#    dest: /root/download
-#    state: directory
-#
-#- get_url:
-#    url: https://codeload.github.com/z3APA3A/3proxy/tar.gz/0.8.13
-#    dest: /root/download/3proxy-0.8.13.tar.gz
-#    checksum: sha1:382226570dca6632f429d2036becde9b89f9341f
-#
-#- unarchive:
-#    remote_src: yes
-#    src: /root/download/3proxy-0.8.13.tar.gz
-#    dest: /root/download
-#
-#- shell: make -f Makefile.Linux
-#  args:
-#    chdir: /root/download/3proxy-0.8.13
+- file:
+    dest: /root/download
+    state: directory
+
+- get_url:
+    url: https://codeload.github.com/z3APA3A/3proxy/tar.gz/0.8.13
+    dest: /root/download/3proxy-0.8.13.tar.gz
+    checksum: sha1:382226570dca6632f429d2036becde9b89f9341f
+
+- unarchive:
+    remote_src: yes
+    src: /root/download/3proxy-0.8.13.tar.gz
+    dest: /root/download
+
+- shell: make -f Makefile.Linux
+  args:
+    chdir: /root/download/3proxy-0.8.13
 
 - file:
     dest: /opt/3proxy/bin

@@ -1,3 +1,0 @@
-Package: *
-Pin: release o=Debian,a=stable
-Pin-Priority: 500

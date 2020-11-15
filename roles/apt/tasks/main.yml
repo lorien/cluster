@@ -4,7 +4,6 @@
     dest: /etc/apt/sources.list
     content: |
       deb http://ftp.fr.debian.org/debian buster main non-free contrib
-      deb-src http://ftp.fr.debian.org/debian buster main non-free contrib
       deb http://security.debian.org/ buster/updates main contrib non-free
 
 
@@ -29,23 +28,22 @@
       Pin: release o=Debian,a=stable
       Pin-Priority: 500
 
+- shell: apt update
+
+#- name: Install new debian keyring
+#  apt: name=debian-archive-keyring
+#       allow_unauthenticated=yes
+#- shell: apt install --allow-unauthenticated debian-archive-keyring
+
+#- name: Fix apt errors
+#  shell: apt-get -yf install
+
+- shell: DEBIAN_FRONTEND=noninteractive apt upgrade -y
+
+- shell: DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
+
 - name: Instal python2 apt package to allow ansible operate apt commands
   shell: apt-get install -y python-apt
 
 - name: Instal python3 apt package to allow ansible operate apt commands
   shell: apt-get install -y python3-apt
-
-- name: Update APT packages index
-  apt:
-    update_cache: yes
-
-- name: Install new debian keyring
-  apt: name=debian-archive-keyring
-       allow_unauthenticated=yes
-
-#- name: Fix apt errors
-#  shell: apt-get -yf install
-
-- name: APT dist-upgrade
-  apt:
-    upgrade: dist

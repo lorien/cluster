@@ -1,4 +1,7 @@
 ---
+- assert:
+    that: telegraf_influxdb_server != ""
+
 - apt_key: url=https://repos.influxdata.com/influxdb.key
 
 - apt_repository: repo="deb https://repos.influxdata.com/debian buster stable"
@@ -10,19 +13,39 @@
     content: |
       [[outputs.influxdb]]
       urls = ["http://{{ telegraf_influxdb_server }}"]
-  when: telegraf_influxdb_server != ""
 
 - copy:
     dest: /etc/telegraf/telegraf.d/inputs_net.conf
     content: |
       [[inputs.net]]
-  when: telegraf_influxdb_server != ""
 
 - copy:
     dest: /etc/telegraf/telegraf.d/inputs_netstat.conf
     content: |
       [[inputs.netstat]]
-  when: telegraf_influxdb_server != ""
+
+- copy:
+    dest: /etc/telegraf/telegraf.d/inputs_netstat.conf
+    content: |
+      [[inputs.netstat]]
+
+- copy:
+    dest: /etc/telegraf/telegraf.d/inputs_procstat.conf
+    content: |
+      [[inputs.procstat]]
+      exe = "."
+
+- name: fix obsolete configuration
+  lineinfile:
+    path: /etc/telegraf/telegraf.conf
+    regex: "^\\s*\\[\\[outputs\\.influxdb\\]\\]"
+    line: "# [[outputs.influxdb]]"
+
+- name: fix obsolete configuration
+  lineinfile:
+    path: /etc/telegraf/telegraf.conf
+    regex: "^\\s*urls\\s*=\\s*\\[\"http://stat\\."
+    line: "# urls = \"\""
 
 - service:
     name: telegraf

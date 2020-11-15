@@ -1,3 +1,3 @@
 ---
 dependencies:
-- role: lorien.cluster.opendns
+- role: lorien.cluster.public_dns

@@ -23,7 +23,6 @@
     - libfreetype6-dev # to build PIL from source
     - libjpeg-dev # to build PIL from source
     - libmemcached-dev
-    #- libmysqld-dev # to build mysql driver from source
     - libmariadb-dev # to build mysql driver from source
     - libssl-dev
     - libxml2-dev # to build lxml from source

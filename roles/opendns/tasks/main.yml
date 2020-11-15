@@ -1,7 +1,0 @@
----
-- shell: chattr -i /etc/resolv.conf
-
-- copy: src=files/resolv.conf
-        dest=/etc/resolv.conf
-
-- shell: chattr +i /etc/resolv.conf

@@ -38,6 +38,10 @@
   lineinfile: dest={{ home_dir }}/.bashrc
               line='alias srd="screen -rd"'
 
+- name: Setup LC_ALL
+  lineinfile: dest={{ home_dir }}/.bashrc
+              line='export LC_ALL=en_US.UTF-8'
+
 - name: Configure git
   copy: src=files/.gitconfig
         dest={{ home_dir }}/.gitconfig

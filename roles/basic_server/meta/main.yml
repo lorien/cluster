@@ -1,7 +1,7 @@
 dependencies:
 - role: lorien.cluster.rclocal
 - role: lorien.cluster.timezone
-- role: lorien.cluster.opendns
+- role: lorien.cluster.public_dns
 - role: lorien.cluster.disable_ipv6
 - role: lorien.cluster.sshd
 - role: lorien.cluster.apt

@@ -5,6 +5,8 @@
 
 - apt: name=python-psycopg2
 
+- apt: name=python3-psycopg2
+
 - postgresql_user: name={{ postgres_add_user }}
                    role_attr_flags=SUPERUSER
   become: yes
