@@ -1,0 +1,23 @@
+#- shell: go get github.com/zmap/zgrab2
+#
+#- shell: make
+#  args:
+#    chdir: /root/go/src/github.com/zmap/zgrab2
+
+- file:
+    dest: /opt/zgrab2/bin
+    state: directory
+
+- copy:
+    remote_src: yes  
+    mode: 0755
+    src: /root/go/src/github.com/zmap/zgrab2/zgrab2
+    dest: /opt/zgrab2/bin
+
+- lineinfile:
+    path: /root/.bashrc
+    line: export PATH=$PATH:/opt/zgrab2/bin
+
+- lineinfile:
+    path: /home/web/.bashrc
+    line: export PATH=$PATH:/opt/zgrab2/bin
