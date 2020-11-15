@@ -12,15 +12,15 @@
     update_cache: yes
 
 - name: Accept Java License
-  debconf: name='oracle-java11-installer'
+  debconf: name='oracle-java15-installer'
            question='shared/accepted-oracle-license-v1-2'
            value='true'
            vtype='select'
 
 - apt:
-    name=oracle-java13-installer
+    name=oracle-java15-installer
     state=latest
 
 - apt:
-    name=oracle-java13-set-default
+    name=oracle-java15-set-default
     state=latest
