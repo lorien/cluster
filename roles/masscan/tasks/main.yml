@@ -1,0 +1,50 @@
+---
+- file:
+    dest: /root/repo
+    state: directory
+
+- git:
+    repo: https://github.com/robertdavidgraham/masscan
+    dest: /root/repo/masscan
+
+- shell: apt install -y gcc make libpcap-dev
+
+- shell: make -j
+  args:
+    chdir: /root/repo/masscan
+
+- file:
+    dest: /opt/masscan/bin
+    state: directory
+
+- copy:
+    remote_src: yes
+    mode: 0755
+    src: /root/repo/masscan/bin/masscan
+    dest: /opt/masscan/bin
+
+- lineinfile:
+    path: /root/.bashrc
+    line: export PATH=$PATH:/opt/masscan/bin
+
+- lineinfile:
+    path: /home/web/.bashrc
+    line: alias masscan="sudo /opt/masscan/bin/masscan"
+
+- copy:
+    dest: /etc/sudoers.d/web_masscan
+    content: |
+      web ALL=NOPASSWD: /opt/masscan/bin/masscan
+
+- file:
+    dest: /etc/masscan
+    state: directory
+
+- copy:
+    path: /etc/masscan/exclude.txt
+    src: files/exclude.txt
+
+- copy:
+    path: /etc/masscan/masscan.conf
+    content: |
+      excludefile = /etc/masscan/exclude.txt
