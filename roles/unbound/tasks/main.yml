@@ -1,0 +1,26 @@
+---
+- service:
+    name=dnsmasq
+    state=stopped
+    enabled=no
+
+- apt:
+    name=dnsmasq
+    state=absent
+
+- apt:
+    name=unbound
+
+- service:
+    name=unbound
+    state=started
+    enabled=yes
+
+- shell: chattr -i /etc/resolv.conf
+
+- copy:
+    dest: /etc/resolv.conf
+    content: |
+      nameserver 127.0.0.1
+
+- shell: chattr +i /etc/resolv.conf
