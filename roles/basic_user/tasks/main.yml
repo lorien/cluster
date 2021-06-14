@@ -30,10 +30,6 @@
   lineinfile: dest={{ home_dir }}/.bashrc
               line='alias ave="source .env/bin/activate"'
 
-- name: Add ape alias
-  lineinfile: dest={{ home_dir }}/.bashrc
-              line='alias ape="pipenv shell"'
-
 - name: Add srd alias
   lineinfile: dest={{ home_dir }}/.bashrc
               line='alias srd="screen -rd"'

@@ -4,11 +4,13 @@
 - name: Create supervisor group
   group: name=supervisor
 
-- name: Install python-pip
-  apt: name=python-pip
+#- name: Install python-pip
+#  apt: name=python-pip
 
 - name: Install supervisor
-  pip: name=supervisor state=latest
+  pip:
+    name: supervisor
+    state: latest
 
 - name: Install supervisor systemd service
   copy: dest=/etc/systemd/system/supervisor.service

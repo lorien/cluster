@@ -8,18 +8,20 @@
     url: https://bootstrap.pypa.io/get-pip.py
     dest: /tmp/get-pip.py
 
-- shell: python2 /tmp/get-pip.py
+# The get-pip.py does not work for python2 anymore
+#- shell: python3 /tmp/get-pip.py
 
 - shell: python3 /tmp/get-pip.py
 
 - pip:
     executable: pip3
-    name: "{{ item }}"
-  with_items:
-    - pipenv
-    - virtualenv
-    - cookiecutter
+    name:
+      - pipenv
+      - virtualenv
+      - cookiecutter
 
+# No pip2 on ubuntu
 - pip:
     name: sr
     executable: pip2
+  when: ansible_distribution != "Ubuntu"

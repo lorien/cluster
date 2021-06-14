@@ -1,49 +1,6 @@
 ---
-- name: Setup APT sources
-  copy:
-    dest: /etc/apt/sources.list
-    content: |
-      deb http://ftp.fr.debian.org/debian buster main non-free contrib
-      deb http://security.debian.org/ buster/updates main contrib non-free
+- include_tasks: debian.yml
+  when: ansible_distribution == "Debian"
 
-
-- name: Disable installing suggested APT packages
-  copy:
-    content: |
-      APT::Install-Suggested "false";
-    dest: /etc/apt/apt.conf.d/07custom
-
-- name: Remove deprecated file
-  file: path=/etc/apt/preferences.d/01custom
-        state=absent
-
-- name: Remove deprecated file
-  file: dest=/etc/apt/preferences.d/02testing
-        state=absent
-
-- copy:
-    dest: /etc/apt/preferences.d/01stable
-    content: |
-      Package: *
-      Pin: release o=Debian,a=stable
-      Pin-Priority: 500
-
-- shell: apt update
-
-#- name: Install new debian keyring
-#  apt: name=debian-archive-keyring
-#       allow_unauthenticated=yes
-#- shell: apt install --allow-unauthenticated debian-archive-keyring
-
-#- name: Fix apt errors
-#  shell: apt-get -yf install
-
-- shell: DEBIAN_FRONTEND=noninteractive apt upgrade -y
-
-- shell: DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
-
-- name: Instal python2 apt package to allow ansible operate apt commands
-  shell: apt-get install -y python-apt
-
-- name: Instal python3 apt package to allow ansible operate apt commands
-  shell: apt-get install -y python3-apt
+- include_tasks: ubuntu.yml
+  when: ansible_distribution == "Ubuntu"

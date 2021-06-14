@@ -16,7 +16,8 @@
     state=started
     enabled=yes
 
-- shell: chattr -i /etc/resolv.conf
+- include_role:
+    name: lorien.cluster.chattr_resolv_conf
 
 - copy:
     dest: /etc/resolv.conf

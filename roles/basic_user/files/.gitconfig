@@ -1,15 +1,14 @@
 [user]
-    name = x
-    email = x@x
+    name = User
+    email = user@example.com
 
 [alias]
 	st = status
     ci = commit
     co = checkout
+	br = branch
     push = push --tags
-    br = branch
-	brdiff = log --left-right --graph --cherry-pick --oneline
-    branches = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
 
 [push]
 	default = simple
+    followTags = true

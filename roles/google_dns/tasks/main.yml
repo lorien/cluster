@@ -1,5 +1,6 @@
 ---
-- shell: chattr -i /etc/resolv.conf
+- include_role:
+    name: lorien.cluster.chattr_resolv_conf
 
 - copy: content="nameserver 8.8.8.8"
         dest=/etc/resolv.conf

@@ -2,9 +2,8 @@ dependencies:
 - role: lorien.cluster.rclocal
 - role: lorien.cluster.timezone
 - role: lorien.cluster.public_dns
-- role: lorien.cluster.disable_ipv6
-- role: lorien.cluster.sshd
 - role: lorien.cluster.apt
+- role: lorien.cluster.sshd
 - role: lorien.cluster.dnsmasq
 - role: lorien.cluster.ntp
 - role: lorien.cluster.basic_user
@@ -21,10 +20,8 @@ dependencies:
 - role: lorien.cluster.nginx
 - role: lorien.cluster.supervisor
 - role: lorien.cluster.logrotate_weblog
-  supervisor_add_user: web
 - role: lorien.cluster.network_irq
 - role: lorien.cluster.network_tune
-#- role: lorien.cluster.conntrack
 - role: lorien.cluster.web_dir
   web_dir_username: web
 - role: lorien.cluster.redis
@@ -32,3 +29,7 @@ dependencies:
   cron_user: 'root'
 - role: lorien.cluster.cron_disable_mail
   cron_user: 'web'
+
+# Disabled:
+#- role: lorien.cluster.disable_ipv6
+#- role: lorien.cluster.conntrack

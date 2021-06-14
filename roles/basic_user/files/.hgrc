@@ -1,6 +1,20 @@
 [ui]
-username = x <x@x.com>
+username = User <user@example.com>
+
+[extensions]
+hgext.fetch=
+hgext.strip=
+hgext.convert=
+hgext.record=
+hgext.churn=
+hgext.extdiff=
+hgext.bookmarks=
+#hgexit.git = /usr/local/lib/python2.7/dist-packages/hggit
 
 [defaults]
 # suppress noisy extdiff header message
 cdiff = -q
+
+[extdiff]
+cmd.cdiff = colordiff
+opts.cdiff = -uprN

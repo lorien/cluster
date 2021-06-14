@@ -10,15 +10,12 @@ set nocp " not compatible with old VI
 set incsearch " search while typing
 set hidden " do not raise warning if user switches between unsaved buffers
 let mapleader = ','
-set timeoutlen=1000
-set ttimeoutlen=0
 
 filetype plugin indent on
 
 set wildignore+=*.pyc,*.pyo,*.pyd,*.swo,*.swp
-let g:ctrlp_custom_ignore = '\.(hg|git|svn)$|venv$|\.env$'
-let g:ctrlp_regexp = 1
 let g:pymode_folding = 0 
+au BufNewFile,BufRead *.tag set filetype=html
 
 set noswapfile
 
@@ -36,7 +33,7 @@ set fileformats+=mac
 set backspace=indent,eol,start
 set fileencodings=utf-8,cp1251,koi8-r,cp866,ucs-bom,ascii
 set encoding=utf-8
-set pastetoggle=<Leader>p
+set pastetoggle=<F4>
 set statusline=%<%f%h%m%r%=(%{&fileencoding},%{&encoding})\ (%b,0x%B)\ %l,%c%V\ %P
 set laststatus=2
 
@@ -51,10 +48,6 @@ map <F3> :bn<CR>
 imap <F3> :w<CR>:bn<CR>
 map <F4> :BufExplorer<CR>
 imap <F4> <ESC>:BufExplorer<CR>
-map <F5> :wa<CR>
-imap <F5> <ESC>:wa<CR>
-map <F8> :wq<CR>
-imap <F8> <ESC>:wq<CR>
 map <CR> :w<CR>
 map <Enter> :w<CR>
 

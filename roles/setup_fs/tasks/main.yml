@@ -1,17 +1,17 @@
 ---
-- name: Remove swap item from /etc/fstab
-  lineinfile:
-    dest: /etc/fstab
-    regexp: '^[\S]+\s+none\s+swap\s+'
-    state: absent
-
-# Run only if swap is active
-- name: Disable active swap
-  command: swapoff --all
+#- name: Remove swap item from /etc/fstab
+#  lineinfile:
+#    dest: /etc/fstab
+#    regexp: '^[\S]+\s+none\s+swap\s+'
+#    state: absent
+#
+## Run only if swap is active
+#- name: Disable active swap
+#  command: swapoff --all
 
 # The kernel will swap only to avoid an out of memory condition, when free memory will be below vm.min_free_kbytes limit.
-- name: Set vm.swappiness to 0
-  sysctl: name=vm.swappiness value=0 sysctl_set=yes reload=yes
+- name: Set vm.swappiness to 1
+  sysctl: name=vm.swappiness value=1 sysctl_set=yes reload=yes
 
 - name: Remount existing filesystems with noatime
   mount: src={{ item.device }} name={{ item.mount }} fstype={{ item.fstype }} opts={{ item.options|replace("relatime", "")|replace(",,", ",") }},noatime state=present

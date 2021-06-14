@@ -5,3 +5,9 @@
               insertafter="^\[Service\]$"
               regexp="^LimitNOFILE"
               line="LimitNOFILE=65536"
+  register: res
+
+- service:
+    name=redis
+    state=reloaded
+  when: res.changed

@@ -3,6 +3,11 @@
 
 - apt: name=unbound state=absent
 
+- service:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+
 - apt: name=dnsmasq
 
 - copy:
@@ -20,7 +25,8 @@
 
 - service: name=dnsmasq state=restarted
 
-- shell: chattr -i /etc/resolv.conf
+- include_role:
+    name: lorien.cluster.chattr_resolv_conf
 
 - copy:
     dest: /etc/resolv.conf
