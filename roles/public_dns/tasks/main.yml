@@ -1,0 +1,11 @@
+---
+- include_role:
+    name: lorien.cluster.chattr_resolv_conf
+
+- copy:
+    dest: /etc/resolv.conf
+    content: |
+      nameserver 1.1.1.1
+      nameserver 8.8.8.8
+
+- shell: chattr +i /etc/resolv.conf

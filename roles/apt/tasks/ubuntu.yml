@@ -1,0 +1,46 @@
+## The Ubuntu part of apt role does not change any /etc/apt/* files
+## because it intended only to deal with those machines which I
+## can not migrate to Debian, so I try to deal with what I have
+## It might be required to add universe & multiverse records
+## to /etc/apt/sources.list lines if they are do not exist there
+
+## TODO: this role must throw error if
+## either multiverse or universe token not found in sources.list
+
+#- name: Setup APT sources
+#  copy:
+#    dest: /etc/apt/sources.list
+#    content: |
+#      deb http://ftp.fr.debian.org/debian buster main non-free contrib
+#      deb http://security.debian.org/ buster/updates main contrib non-free
+#
+#
+#- name: Disable installing suggested APT packages
+#  copy:
+#    content: |
+#      APT::Install-Suggested "false";
+#    dest: /etc/apt/apt.conf.d/07custom
+#
+#- copy:
+#    dest: /etc/apt/preferences.d/01stable
+#    content: |
+#      Package: *
+#      Pin: release o=Debian,a=stable
+#      Pin-Priority: 500
+#
+- shell: apt update
+#
+##- name: Install new debian keyring
+##  apt: name=debian-archive-keyring
+##       allow_unauthenticated=yes
+##- shell: apt install --allow-unauthenticated debian-archive-keyring
+#
+##- name: Fix apt errors
+##  shell: apt-get -yf install
+
+- shell: DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options='--force-confnew' -y upgrade
+
+- shell: DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options='--force-confnew' -y full-upgrade
+
+- name: Instal python3 apt package to allow ansible operate apt commands
+  shell: apt-get install -y python3-apt

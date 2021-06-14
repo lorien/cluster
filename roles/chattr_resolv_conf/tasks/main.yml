@@ -1,0 +1,9 @@
+# On some systems the /etc/resolv.conf is symlink,
+# so we can't do "chattr -i" on it
+
+- stat:
+    path: /etc/resolv.conf
+  register: res_stat
+
+- shell: chattr -i /etc/resolv.conf
+  when: res_stat.stat.islnk is not defined or not res_stat.stat.islnk

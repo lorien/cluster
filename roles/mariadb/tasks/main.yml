@@ -1,0 +1,14 @@
+---
+- debconf: name='mariadb-server'
+           question='mariadb-server/root_password'
+           value=''
+           vtype='password'
+
+- debconf: name='mariadb-server'
+           question='mariadb-server/root_password_again'
+           value=''
+           vtype='password'
+
+- apt: name=mariadb-server
+
+#- mariadb_user: name=zabbix password=''
